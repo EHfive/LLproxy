@@ -64,7 +64,7 @@ class DataHandler:
                 else:
                     round_n = 1
                     c_round = -1
-                cur.execute("SELECT * FROM event_challenge_users WHERE uid= %s", self.id)
+                cur.execute("SELECT * FROM event_challenge_users WHERE uid= %s AND event_id = %s", (self.id,event_id))
                 event_user = cur.fetchone()
                 final = 1 if c_round == -1 else 0
 
@@ -85,7 +85,6 @@ class DataHandler:
                             pair_id = event_user['curr_pair_id']
                             round_n = event_user['curr_round'] + 1
                             need_init = False
-                    pass
                 else:
                     point = 0
                     high_score = 0
@@ -114,7 +113,6 @@ class DataHandler:
                     pair_id = event_user['curr_pair_id']
                     put_sqls(sq.challenge_finalize(self.s, pair_id))
 
-
         elif m[0] in ('live', 'rlive'):
             if m[1] == 'reward' and '/reward' in self.s['path']:
                 put_sqls(sq.live_play(self.s))
@@ -131,8 +129,8 @@ class DataHandler:
                         }
                         put_sqls(sq.pub_live_info(live_id, merge_info))
                         live_maps.append(live_id)
-
-
+        elif m[0] == 'festival':
+            put_sqls(sq.request_cache(self.s))
         elif m[0] == 'user':
             if m[1] == 'userInfo':
                 if 'result' in self.res_data:
