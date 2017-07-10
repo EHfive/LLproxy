@@ -1,0 +1,54 @@
+{
+  "result": {
+    "event_list": [
+      {
+        "event_id": 81,
+        "event_category_id": 2,
+        "name": "SCORE MATCH",
+        "open_date": "2017-05-23 14:10:00",
+        "start_date": "2017-05-23 14:10:01",
+        "end_date": "2017-06-02 13:59:59",
+        "close_date": "2017-06-05 13:59:59",
+        "banner_asset_name": "assets/image/event/banner/e_bt_03.png",
+        "banner_se_asset_name": "assets/image/event/banner/e_bt_03se.png",
+        "result_banner_asset_name": "assets/image/event/banner/e_bt_03_re.png",
+        "description": "通过SCORE MATCH来竞争的活动！",
+        "member_category": 2
+      }
+    ],
+    "live_list": [
+      {
+        "live_difficulty_id": 1344,
+        "start_date": "2017-04-05 00:00:00",
+        "end_date": "2017-06-04 23:59:59",
+        "is_random": false,
+        "dangerous": true,
+        "use_quad_point": false
+      },
+      {
+        "live_difficulty_id": 1345,
+        "start_date": "2017-04-15 00:00:00",
+        "end_date": "2017-06-14 23:59:59",
+        "is_random": false,
+        "dangerous": true,
+        "use_quad_point": false
+      }
+    ],
+    "limited_bonus_list": [],
+    "random_live_list": [
+      {
+        "attribute_id": 2,
+        "start_date": "2017-06-01 00:00:00",
+        "end_date": "2017-06-01 23:59:59"
+      },
+      {
+        "attribute_id": 3,
+        "start_date": "2017-06-02 00:00:00",
+        "end_date": "2017-06-02 23:59:59"
+      }
+    ]
+  },
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

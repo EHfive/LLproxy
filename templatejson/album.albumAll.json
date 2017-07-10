@@ -1,0 +1,38 @@
+{
+  "result": [
+    {
+      "unit_id": 1,
+      "rank_max_flag": true,
+      "love_max_flag": true,
+      "rank_level_max_flag": true,
+      "all_max_flag": true,
+      "highest_love_per_unit": 50,
+      "total_love": 50,
+      "favorite_point": 0
+    },
+    {
+      "unit_id": 2,
+      "rank_max_flag": true,
+      "love_max_flag": true,
+      "rank_level_max_flag": true,
+      "all_max_flag": true,
+      "highest_love_per_unit": 50,
+      "total_love": 50,
+      "favorite_point": 0
+    },
+    {
+      "unit_id": 3,
+      "rank_max_flag": true,
+      "love_max_flag": true,
+      "rank_level_max_flag": true,
+      "all_max_flag": true,
+      "highest_love_per_unit": 50,
+      "total_love": 106,
+      "favorite_point": 0
+    }
+  ],
+  "desc": "相册",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

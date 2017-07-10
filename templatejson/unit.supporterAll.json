@@ -1,0 +1,58 @@
+{
+  "result": {
+    "unit_support_list": [
+      {
+        "unit_id": 29,
+        "amount": 7
+      },
+      {
+        "unit_id": 89,
+        "amount": 3
+      },
+      {
+        "unit_id": 379,
+        "amount": 4
+      },
+      {
+        "unit_id": 380,
+        "amount": 2
+      },
+      {
+        "unit_id": 381,
+        "amount": 9
+      },
+      {
+        "unit_id": 382,
+        "amount": 2
+      },
+      {
+        "unit_id": 383,
+        "amount": 1
+      },
+      {
+        "unit_id": 384,
+        "amount": 1
+      },
+      {
+        "unit_id": 386,
+        "amount": 1
+      },
+      {
+        "unit_id": 1024,
+        "amount": 6
+      },
+      {
+        "unit_id": 1072,
+        "amount": 1
+      },
+      {
+        "unit_id": 1142,
+        "amount": 1
+      }
+    ]
+  },
+  "desc": "支援成员",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

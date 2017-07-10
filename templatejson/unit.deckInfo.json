@@ -1,0 +1,99 @@
+{
+  "result": [
+    {
+      "unit_deck_id": 1,
+      "main_flag": false,
+      "deck_name": "A",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 2,
+      "main_flag": false,
+      "deck_name": "B",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 3,
+      "main_flag": false,
+      "deck_name": "C",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 4,
+      "main_flag": false,
+      "deck_name": "主力Smile",
+      "unit_owning_user_ids": [
+        {
+          "position": 1,
+          "unit_owning_user_id": 2584778526
+        },
+        {
+          "position": 2,
+          "unit_owning_user_id": 2546604111
+        },
+        {
+          "position": 3,
+          "unit_owning_user_id": 2532048462
+        },
+        {
+          "position": 4,
+          "unit_owning_user_id": 2516036697
+        },
+        {
+          "position": 5,
+          "unit_owning_user_id": 2521098549
+        },
+        {
+          "position": 6,
+          "unit_owning_user_id": 2574144062
+        },
+        {
+          "position": 7,
+          "unit_owning_user_id": 2516036707
+        },
+        {
+          "position": 8,
+          "unit_owning_user_id": 2546699621
+        },
+        {
+          "position": 9,
+          "unit_owning_user_id": 2521535634
+        }
+      ]
+    },
+    {
+      "unit_deck_id": 5,
+      "main_flag": false,
+      "deck_name": "主力Cool",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 6,
+      "main_flag": false,
+      "deck_name": "主力Pure",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 7,
+      "main_flag": false,
+      "deck_name": "队伍G",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 8,
+      "main_flag": true,
+      "deck_name": "队伍H",
+      "unit_owning_user_ids": []
+    },
+    {
+      "unit_deck_id": 9,
+      "main_flag": false,
+      "deck_name": "队伍I",
+      "unit_owning_user_ids": []
+    }
+  ],
+  "desc": "队伍信息",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

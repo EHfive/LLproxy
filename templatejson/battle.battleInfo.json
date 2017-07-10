@@ -1,0 +1,40 @@
+{
+  "result": [
+    {
+      "event_id": 81,
+      "point_name": "PT",
+      "event_point": 96852,
+      "total_event_point": 96852,
+      "event_battle_difficulty_m": [
+        {
+          "difficulty": 1,
+          "capital_type": 1,
+          "capital_value": 5
+        },
+        {
+          "difficulty": 2,
+          "capital_type": 1,
+          "capital_value": 10
+        },
+        {
+          "difficulty": 3,
+          "capital_type": 1,
+          "capital_value": 15
+        },
+        {
+          "difficulty": 4,
+          "capital_type": 1,
+          "capital_value": 25
+        },
+        {
+          "difficulty": 5,
+          "capital_type": 1,
+          "capital_value": 25
+        }
+      ]
+    }
+  ],
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

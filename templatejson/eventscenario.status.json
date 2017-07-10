@@ -1,0 +1,90 @@
+{
+  "result": {
+    "event_scenario_list": [
+      {
+        "event_id": 10001,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/38_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/38_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 40,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/40_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/40_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 38,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/38_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/38_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 36,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/36_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/36_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 34,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/34_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/34_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 32,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/32_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/32_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 30,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/30_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/30_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 28,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/28_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/28_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 26,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/26_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/26_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      },
+      {
+        "event_id": 24,
+        "event_scenario_btn_asset": "assets/image/ui/eventscenario/24_se_ba_t.png",
+        "event_scenario_se_btn_asset": "assets/image/ui/eventscenario/24_se_ba_tse.png",
+        "open_date": null,
+        "chapter_list": [
+        ]
+      }
+    ]
+  },
+  "desc": "活动剧情",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

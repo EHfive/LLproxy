@@ -1,0 +1,26 @@
+{
+  "result": {
+    "subscenario_status_list": [
+      {
+        "subscenario_id": 1,
+        "status": 2
+      },
+      {
+        "subscenario_id": 2,
+        "status": 2
+      },
+      {
+        "subscenario_id": 3,
+        "status": 2
+      },
+      {
+        "subscenario_id": 4,
+        "status": 2
+      }
+    ]
+  },
+  "desc": "支线剧情",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

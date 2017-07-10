@@ -1,0 +1,52 @@
+{
+  "result": {
+    "items": [
+      {
+        "item_id": "1",
+        "item_category_id": "1",
+        "item_sub_category_id": "1",
+        "amount": "8",
+        "insert_date": "2016-06-02 17:40:09"
+      },
+      {
+        "item_id": "5",
+        "item_category_id": "0",
+        "item_sub_category_id": "0",
+        "amount": "0",
+        "insert_date": "2016-05-22 21:52:41"
+      },
+      {
+        "item_id": "8",
+        "item_category_id": "0",
+        "item_sub_category_id": "0",
+        "amount": "3",
+        "insert_date": "2017-03-05 23:25:36"
+      },
+      {
+        "item_id": "9",
+        "item_category_id": "0",
+        "item_sub_category_id": "0",
+        "amount": "0",
+        "insert_date": "2017-03-17 01:09:00"
+      },
+      {
+        "item_id": "10",
+        "item_category_id": "0",
+        "item_sub_category_id": "0",
+        "amount": "0",
+        "insert_date": "2017-03-05 23:25:36"
+      },
+      {
+        "item_id": "12",
+        "item_category_id": "0",
+        "item_sub_category_id": "0",
+        "amount": "0",
+        "insert_date": "2017-05-28 16:08:41"
+      }
+    ]
+  },
+  "desc": "各种招募券",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

@@ -1,0 +1,26 @@
+{
+  "result": {
+    "scenario_status_list": [
+      {
+        "scenario_id": 1,
+        "status": 2
+      },
+      {
+        "scenario_id": 2,
+        "status": 2
+      },
+      {
+        "scenario_id": 3,
+        "status": 2
+      },
+      {
+        "scenario_id": 4,
+        "status": 2
+      }
+    ]
+  },
+  "desc": "主线剧情",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

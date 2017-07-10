@@ -1,0 +1,45 @@
+{
+  "result": {
+    "normal_live_status_list": [
+      {
+        "live_difficulty_id": 1,
+        "status": 2,
+        "hi_score": 52417,
+        "hi_combo_count": 95,
+        "clear_cnt": 5,
+        "achieved_goal_id_list": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      }
+    ],
+    "special_live_status_list": [
+      {
+        "live_difficulty_id": 1344,
+        "status": 2,
+        "hi_score": 701520,
+        "hi_combo_count": 123,
+        "clear_cnt": 1,
+        "achieved_goal_id_list": [
+          9577,
+          9578,
+          9579,
+          9580
+        ]
+      }
+    ],
+    "marathon_live_status_list": [
+    ]
+  },
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

@@ -1,0 +1,54 @@
+{
+  "result": {
+    "owning_info": [
+      {
+        "unit_removable_skill_id": 1,
+        "total_amount": 14,
+        "equipped_amount": 3,
+        "insert_date": "2017-02-21 11:10:19"
+      },
+      {
+        "unit_removable_skill_id": 2,
+        "total_amount": 31,
+        "equipped_amount": 6,
+        "insert_date": "2017-02-21 11:10:19"
+      },
+      {
+        "unit_removable_skill_id": 3,
+        "total_amount": 33,
+        "equipped_amount": 7,
+        "insert_date": "2017-02-21 11:10:19"
+      }
+    ],
+    "equipment_info": {
+      "2175750141": {
+        "unit_owning_user_id": 2175750141,
+        "detail": [
+          {
+            "unit_removable_skill_id": 9
+          }
+        ]
+      },
+      "2177707452": {
+        "unit_owning_user_id": 2177707452,
+        "detail": [
+          {
+            "unit_removable_skill_id": 2
+          }
+        ]
+      },
+      "2199580430": {
+        "unit_owning_user_id": 2199580430,
+        "detail": [
+          {
+            "unit_removable_skill_id": 11
+          }
+        ]
+      }
+    }
+  },
+  "desc": "学园偶像技能,宝石",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

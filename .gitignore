@@ -1,0 +1,6 @@
+config.py
+gen_xmessagecode.py
+.idea/
+__pycache__/
+data/
+db/

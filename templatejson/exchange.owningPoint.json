@@ -1,0 +1,22 @@
+{
+  "result": {
+    "exchange_point_list": [
+      {
+        "rarity": 2,
+        "exchange_point": 38
+      },
+      {
+        "rarity": 3,
+        "exchange_point": 0
+      },
+      {
+        "rarity": 4,
+        "exchange_point": -1
+      }
+    ]
+  },
+  "desc": "贴纸数",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

@@ -1,0 +1,95 @@
+{
+  "result": {
+    "background_info": [
+      {
+        "background_id": 2,
+        "is_set": false,
+        "insert_date": "2016-07-18 05:32:52"
+      },
+      {
+        "background_id": 3,
+        "is_set": false,
+        "insert_date": "2016-07-18 05:32:52"
+      },
+      {
+        "background_id": 4,
+        "is_set": false,
+        "insert_date": "2016-07-18 05:32:52"
+      },
+      {
+        "background_id": 5,
+        "is_set": false,
+        "insert_date": "2016-07-18 05:32:52"
+      },
+      {
+        "background_id": 6,
+        "is_set": false,
+        "insert_date": "2016-10-20 21:47:30"
+      },
+      {
+        "background_id": 7,
+        "is_set": false,
+        "insert_date": "2017-03-07 08:23:56"
+      },
+      {
+        "background_id": 8,
+        "is_set": false,
+        "insert_date": "2017-03-22 08:07:45"
+      },
+      {
+        "background_id": 9,
+        "is_set": false,
+        "insert_date": "2017-04-02 17:47:42"
+      },
+      {
+        "background_id": 10,
+        "is_set": false,
+        "insert_date": "2017-04-13 15:20:22"
+      },
+      {
+        "background_id": 11,
+        "is_set": false,
+        "insert_date": "2017-05-02 00:19:34"
+      },
+      {
+        "background_id": 12,
+        "is_set": false,
+        "insert_date": "2017-05-21 22:15:41"
+      },
+      {
+        "background_id": 17,
+        "is_set": false,
+        "insert_date": "2017-05-05 15:39:11"
+      },
+      {
+        "background_id": 18,
+        "is_set": false,
+        "insert_date": "2017-05-12 00:01:38"
+      },
+      {
+        "background_id": 20,
+        "is_set": false,
+        "insert_date": "2017-05-13 00:14:08"
+      },
+      {
+        "background_id": 21,
+        "is_set": true,
+        "insert_date": "2017-05-31 00:10:04"
+      },
+      {
+        "background_id": 22,
+        "is_set": false,
+        "insert_date": "2017-05-10 00:24:40"
+      },
+      {
+        "background_id": 1,
+        "is_set": false,
+        "insert_date": "2013-04-15 00:00:00"
+      }
+    ]
+  },
+  "desc": "背景",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

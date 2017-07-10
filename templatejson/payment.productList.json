@@ -1,0 +1,203 @@
+{
+  "result": {
+    "sns_product_list": [
+      {
+        "product_id": "com.meiyu.lovelive.lovec001",
+        "name": "1个Loveca",
+        "price": 6,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 1,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec006",
+        "name": "6个Loveca",
+        "price": 25,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 6,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec016",
+        "name": "16个Loveca",
+        "price": 68,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 16,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec024",
+        "name": "24个Loveca",
+        "price": 98,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 24,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec052",
+        "name": "52个Loveca",
+        "price": 198,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 52,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec088",
+        "name": "88个Loveca",
+        "price": 318,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 88,
+            "is_freebie": false
+          }
+        ]
+      },
+      {
+        "product_id": "com.meiyu.lovelive.lovec0155",
+        "name": "155个Loveca",
+        "price": 518,
+        "product_type": 1,
+        "item_list": [
+          {
+            "item_id": 4,
+            "add_type": 3001,
+            "amount": 155,
+            "is_freebie": false
+          }
+        ]
+      }
+    ],
+    "product_list": [
+      {
+        "product_id": "com.meiyu.lovelive.loveb13qw",
+        "name": "全世界3000万人纪念礼包〜μ's〜",
+        "confirmation": "{{name}} ·{{item_list.1.name}} {{item_list.1.amount}}{{item_list.1.unit}} （可以进行11连优等生招募） ·{{item_list.2.name}} {{item_list.2.amount}}{{item_list.2.unit}} （可以招募在优等生招募中登场的SSR以上μ's成员） ·{{item_list.3.name}} {{item_list.3.amount}}{{item_list.3.unit}} 价格： {{price}} 可购买次数： {{limit_status.remaining_count}} 购买期限： {{limit_status.end_date}}",
+        "banner_img_asset": "assets/image/shop/banner/sh_ba_05.png",
+        "banner_img_se_asset": "assets/image/shop/banner/sh_ba_05se.png",
+        "price": 188,
+        "product_type": 2,
+        "item_list": [
+          {
+            "item_id": 8,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          },
+          {
+            "item_id": 11,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          },
+          {
+            "item_id": 3,
+            "add_type": 3000,
+            "amount": 1000000,
+            "is_freebie": true
+          }
+        ],
+        "limit_status": {
+          "end_date": "2017-06-02 23:59:59",
+          "term_end_date": "2017-06-02 23:59:59",
+          "remaining_time": "1日",
+          "remaining_count": 1
+        }
+      },
+      {
+        "product_id": "com.meiyu.lovelive.loveb1yy",
+        "name": "月初限定！学园偶像应援礼包〜μ's〜",
+        "confirmation": "{{name}} ・{{item_list.1.name}} {{item_list.1.amount}}{{item_list.1.unit}}　　　　　　　　　　　　　　　 (可以进行11连优等生招募)　　　　　　　　　　　 ・{{item_list.2.name}} {{item_list.2.amount}}{{item_list.2.unit}}　　　　　　　　　　　　 (可以招募在优等生招募中登场的SR以上μ's社员)　　 价格: {{price}}　　　　　可购买次数: {{limit_status.remaining_count}} 购买期限: {{limit_status.end_date}}",
+        "banner_img_asset": "assets/image/shop/banner/sh_ba_01.png",
+        "banner_img_se_asset": "assets/image/shop/banner/sh_ba_01se.png",
+        "price": 188,
+        "product_type": 2,
+        "item_list": [
+          {
+            "item_id": 8,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          },
+          {
+            "item_id": 9,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          }
+        ],
+        "limit_status": {
+          "end_date": "2017-06-07 23:59:59",
+          "term_end_date": "2017-06-07 23:59:59",
+          "remaining_time": "6日",
+          "remaining_count": 1
+        }
+      },
+      {
+        "product_id": "com.meiyu.lovelive.loveb2yy",
+        "name": "月初限定！学园偶像应援礼包〜Aqours〜",
+        "confirmation": "{{name}} ・{{item_list.1.name}} {{item_list.1.amount}}{{item_list.1.unit}}　　　　　　　　　　　　　　　 (可以进行11连优等生招募)　　　　　　　　　　　 ・{{item_list.2.name}} {{item_list.2.amount}}{{item_list.2.unit}}　　　　　　　　　　　 (可以招募在优等生招募中登场的SR以上Aqours社员) 价格: {{price}}　　　　　可购买次数: {{limit_status.remaining_count}} 购买期限: {{limit_status.end_date}}",
+        "banner_img_asset": "assets/image/shop/banner/sh_ba_03.png",
+        "banner_img_se_asset": "assets/image/shop/banner/sh_ba_03se.png",
+        "price": 188,
+        "product_type": 2,
+        "item_list": [
+          {
+            "item_id": 8,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          },
+          {
+            "item_id": 10,
+            "add_type": 1000,
+            "amount": 1,
+            "is_freebie": false
+          }
+        ],
+        "limit_status": {
+          "end_date": "2017-06-07 23:59:59",
+          "term_end_date": "2017-06-07 23:59:59",
+          "remaining_time": "6日",
+          "remaining_count": 1
+        }
+      }
+    ]
+  },
+  "desc": "商品信息",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}

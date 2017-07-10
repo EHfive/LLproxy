@@ -1,0 +1,71 @@
+{
+  "result": {
+    "time_limit": "2017-06-02 13:59:59",
+    "member_category_list": [
+      {
+        "member_category": 1,
+        "banner_list": [
+          {
+            "banner_type": 1,
+            "target_id": 1,
+            "asset_path": "assets/image/secretbox/icon/s_ba_3_2.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_3_2se.png"
+          },
+          {
+            "banner_type": 1,
+            "target_id": 4,
+            "asset_path": "assets/image/secretbox/icon/s_ba_8_1.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_8_1se.png"
+          },
+          {
+            "banner_type": 0,
+            "target_id": 81,
+            "asset_path": "assets/image/event/banner/e_bt_03.png",
+            "asset_path_se": "assets/image/event/banner/e_bt_03se.png",
+            "master_is_active_event": true
+          },
+          {
+            "banner_type": 1,
+            "target_id": 32,
+            "asset_path": "assets/image/secretbox/icon/s_ba_62_2.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_62_2se.png"
+          }
+        ]
+      },
+      {
+        "member_category": 2,
+        "banner_list": [
+          {
+            "banner_type": 0,
+            "target_id": 81,
+            "asset_path": "assets/image/event/banner/e_bt_03.png",
+            "asset_path_se": "assets/image/event/banner/e_bt_03se.png",
+            "master_is_active_event": true
+          },
+          {
+            "banner_type": 1,
+            "target_id": 32,
+            "asset_path": "assets/image/secretbox/icon/s_ba_62_2.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_62_2se.png"
+          },
+          {
+            "banner_type": 1,
+            "target_id": 1,
+            "asset_path": "assets/image/secretbox/icon/s_ba_3_2.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_3_2se.png"
+          },
+          {
+            "banner_type": 1,
+            "target_id": 4,
+            "asset_path": "assets/image/secretbox/icon/s_ba_8_1.png",
+            "asset_path_se": "assets/image/secretbox/icon/s_ba_8_1se.png"
+          }
+        ]
+      }
+    ]
+  },
+  "desc": "banner",
+  "status": 200,
+  "commandNum": false,
+  "timeStamp": 1496304451
+}
