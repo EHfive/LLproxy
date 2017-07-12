@@ -31,7 +31,7 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
         if urlparse.urlsplit(req.path).path == '/main.php/download/batch':
             # res_plain = res_body
             try:
-                user_id = req.headers["User-ID"]
+                user_id = int(req.headers["User-ID"])
             except KeyError:
                 user_id = None
             try:
@@ -51,21 +51,26 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                     cur = db.cursor(cursor=pymysql.cursors.DictCursor)
                     patch_db = None
                     patch_asset = None
+                    version = req.headers.get('Client-Version')
                     if user_id in [865384, 5012675]:
                         cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type >=0 AND patch_type = 1 ORDER BY update_date DESC ")
+                            "SELECT * FROM patch_anti WHERE public_type >=0 AND patch_type = 1 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
+                                version))
 
                         patch_db = cur.fetchone()
                         cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type >=0 AND patch_type = 2 ORDER BY update_date DESC ")
+                            "SELECT * FROM patch_anti WHERE public_type >= 0 AND patch_type = 2 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
+                                version))
                         patch_asset = cur.fetchone()
                     else:
                         cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 1 ORDER BY update_date DESC ")
+                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 1 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
+                                version))
 
                         patch_db = cur.fetchone()
                         cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 2 ORDER BY update_date DESC ")
+                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 2 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
+                                version))
                         patch_asset = cur.fetchone()
                     if patch_db and (patch_db['pkg_id'] not in req_json['excluded_package_ids']):
                         res_json['response_data'] += [

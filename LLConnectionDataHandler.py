@@ -27,7 +27,7 @@ def val_init():
     cur.execute("SELECT live_difficulty_id FROM pub_live_info")
     for x in cur.fetchall():
         live_maps.append(x[0])
-    print(live_maps)
+        # print(live_maps)
 
 
 class DataHandler:
@@ -64,7 +64,7 @@ class DataHandler:
                 else:
                     round_n = 1
                     c_round = -1
-                cur.execute("SELECT * FROM event_challenge_users WHERE uid= %s AND event_id = %s", (self.id,event_id))
+                cur.execute("SELECT * FROM event_challenge_users WHERE uid= %s AND event_id = %s", (self.id, event_id))
                 event_user = cur.fetchone()
                 final = 1 if c_round == -1 else 0
 
@@ -130,7 +130,37 @@ class DataHandler:
                         put_sqls(sq.pub_live_info(live_id, merge_info))
                         live_maps.append(live_id)
         elif m[0] == 'festival':
-            put_sqls(sq.request_cache(self.s))
+            db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+            cur = db.cursor(cursor=pymysql.cursors.DictCursor)
+            # if m[1] != 'festivalInfo':
+            #     put_sqls(sq.request_cache(self.s, stat=2))
+            if m[1] == 'liveStart':
+                cur.execute(
+                    "SELECT curr_pair_id,high_score FROM event_festival_users WHERE uid = {} AND event_id = {}".format(
+                        self.id, self.req_data['event_id']
+                    ))
+                result = cur.fetchone()
+                if result:
+                    pair_id = result['curr_pair_id'] + 1
+
+                else:
+                    pair_id = 1
+
+                put_sqls(sq.festival_start(self.s, pair_id))
+                print(result)
+            elif m[1] == 'liveReward':
+                cur.execute(
+                    "SELECT curr_pair_id,high_score FROM event_festival_users WHERE uid = {} AND event_id = {}".format(
+                        self.id, self.req_data['event_id']
+                    ))
+                result = cur.fetchone()
+                if result:
+                    high_score = result['high_score'] or 0
+                    pair_id = result['curr_pair_id']
+                    put_sqls(sq.festival_reward(self.s, pair_id, high_score))
+                put_sqls(sq.effort_point_box(self.id, self.res_data['effort_point']))
+                put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
+                print(result)
         elif m[0] == 'user':
             if m[1] == 'userInfo':
                 if 'result' in self.res_data:
@@ -280,6 +310,8 @@ def score_match_thread(u_id):
 
 def datainserter():
     tag = 0
+    db = None
+    cur = None
     for i in range(3):
         try:
             db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
@@ -296,6 +328,8 @@ def datainserter():
     while True:
         sqlq = database_q.get()
         try:
+            # db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+            # cur = db.cursor()
             cur.execute(sqlq)
             db.commit()
         except Exception as e:
@@ -309,6 +343,7 @@ def datainserter():
             else:
                 cur.execute(sqlq)
                 db.commit()
+                # print("db inserted")
 
 
 def put_sqls(sqls):

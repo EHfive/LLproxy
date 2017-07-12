@@ -61,6 +61,7 @@ if __name__ == '__main__':
                 ('清纯', 'Pure'),
                 ('洒脱', 'Cool'),
                 ('全连击', 'FULL COMBO'),
+                ('专家', 'EXPRET'),
                 ('得分', 'SCORE')
 
             ]
@@ -68,6 +69,12 @@ if __name__ == '__main__':
         {
             'colname': 'description',
             'pairs': [
+                ('甜美', 'Smile'),
+                ('清纯', 'Pure'),
+                ('洒脱', 'Cool'),
+
+                ('专家', 'EXPRET'),
+
                 ('全连击', 'FULL COMBO'),
             ]
         }
@@ -300,6 +307,9 @@ if __name__ == '__main__':
         {
             'colname': 'voice_content',
             'pairs': [
+                ('甜美', 'Smile'),
+                ('清纯', 'Pure'),
+                ('洒脱', 'Cool'),
                 ('日香', '妮可'),
                 ('微笑小香香','niconico~ni~'),
                 ('香香', '妮可'),

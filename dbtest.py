@@ -4,6 +4,12 @@ import hashlib
 import sqlite3
 import config as cfg
 import pymysql
+from pymysql.cursors import DictCursor
+import sqlquerys as sq
+import threading
+import queue
+
+database_q = queue.Queue()
 
 
 def game_db_init():
@@ -146,6 +152,68 @@ def challenge_tran():
         print(pair_id, lp, uid)
 
 
+def festival_record_tran():
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor()
+    cur.execute(
+        "SELECT uid,curr_pair_id FROM `event_festival_users` ")
+    pair_id_by_u = dict(cur.fetchall())
+    cur = db.cursor(DictCursor)
+    cur.execute(
+        "SELECT * FROM `request_cache` WHERE (`m1` LIKE 'liveStart' OR `m1` LIKE 'liveReward') AND `status`=2 AND uid =865384 ORDER BY id ASC ")
+    # put_sqls(["TRUNCATE event_festival", "TRUNCATE event_festival_users"])
+
+    score_by_u = {}
+    res_all = cur.fetchall()
+    if not res_all:
+        return
+    last_id = res_all[0]['id']
+    for result in res_all:
+        req = json.loads(result['request'])
+        res = json.loads(result['response'])
+        s = {
+            "user_id": result['uid'],
+            "req_data": req,
+            "res_data": res
+        }
+        pair_id = None
+        if result['m1'] == 'liveStart':
+            if result['uid'] in pair_id_by_u:
+                pair_id_by_u[result['uid']] += 1
+            else:
+                pair_id_by_u[result['uid']] = 1
+            pair_id = pair_id_by_u[result['uid']]
+            put_sqls(
+                sq.festival_start(s, pair_id, req['timeStamp'])
+            )
+        elif result['m1'] == 'liveReward':
+            if result['id'] >= last_id:
+                put_sqls(sq.effort_point_box(result['uid'], res['effort_point'], req['timeStamp']))
+            score_curr = req['score_smile'] + req['score_cute'] + req['score_cool']
+            if result['uid'] in score_by_u:
+                score_by_u[result['uid']] = max(score_by_u[result['uid']], score_curr)
+            else:
+                score_by_u[result['uid']] = score_curr
+            if result['uid'] in pair_id_by_u:
+                pair_id = pair_id_by_u[result['uid']]
+                put_sqls(
+                    sq.festival_reward(s, pair_id, score_by_u[result['uid']], req['timeStamp'])
+                )
+
+        print(result['id'], result['uid'], pair_id, result['m1'])
+        put_sqls(("UPDATE request_cache SET `status`=0 WHERE id = '{}'".format(result['id']),))
+
+
 game_db_init()
-setting_tran()
-challenge_tran()
+
+db_o = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+cur_o = db_o.cursor()
+
+
+def put_sqls(sqls):
+    for x in sqls:
+        cur_o.execute(x)
+        db_o.commit()
+
+
+festival_record_tran()
