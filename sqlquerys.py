@@ -662,24 +662,33 @@ def festival_start(source, pair_id, update_time=None):
     song_set_ids = []
     total_combo = 0
     guest_bonus = []
+    sub_guest_bonus = []
     for live in res['live_info']:
         song_diff_ids.append(live['live_difficulty_id'])
         song_set_ids.append(live_setting_id[live['live_difficulty_id']])
         total_combo += len(live['notes_list'])
-        if 'guest_bonus' in guest_bonus:
+        del live['notes_list']
+
+        try:
             guest_bonus.append(live['guest_bonus'])
-        else:
+        except KeyError:
+            # print(live)
             guest_bonus.append(None)
+        try:
+            sub_guest_bonus.append(live['sub_guest_bonus'])
+        except KeyError:
+            sub_guest_bonus.append(None)
     sql = """INSERT INTO event_festival_users (uid, event_id, curr_pair_id, `status`, update_time, last_song_set_ids) 
     VALUES ('{}','{}','{}',0,'{}','{}')
     ON DUPLICATE KEY UPDATE event_id = VALUES(event_id),curr_pair_id = VALUES(curr_pair_id),`status`=VALUES(`status`),
     update_time=VALUES(update_time),last_song_set_ids=VALUES(last_song_set_ids)
     """.format(s['user_id'], req['event_id'], pair_id, update_time, json_dump(song_set_ids))
     sql2 = """INSERT INTO event_festival (uid, event_id, `status`, pair_id, song_diff_ids, song_set_ids, update_time, 
-    total_combo, event_festival_item_ids, guest_bonus) 
-    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}')
+    total_combo, event_festival_item_ids, guest_bonus,sub_guest_bonus) 
+    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}','{}')
     """.format(s['user_id'], req['event_id'], pair_id, json_dump(song_diff_ids), json_dump(song_set_ids),
-               update_time, total_combo, json_dump(req['event_festival_item_ids']), json_dump(guest_bonus))
+               update_time, total_combo, json_dump(req['event_festival_item_ids']), json_dump(guest_bonus),
+               json_dump(sub_guest_bonus))
     return sql, sql2
 
 
@@ -717,13 +726,33 @@ def festival_reward(source, pair_id, score, update_time=None):
     sql2 = """UPDATE event_festival SET perfect_cnt='{}',great_cnt='{}',good_cnt='{}',bad_cnt='{}',miss_cnt='{}',
     max_combo='{}',score='{}',love_cnt='{}',`status`=1,total_event_point='{}', added_event_point='{}', rank='{}', 
     combo_rank='{}', rarity_3_cnt='{}', rarity_2_cnt='{}', rarity_1_cnt='{}', ticket_add='{}', reward_items='{}',
-    update_time='{}' WHERE uid ='{}' AND event_id ='{}' AND pair_id ='{}'
+    update_time='{}' ,sub_bonus_flag='{}' WHERE uid ='{}' AND event_id ='{}' AND pair_id ='{}'
     """.format(req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['miss_cnt'], req['max_combo'],
                score_curr, req['love_cnt'],
                pt_ifo['after_total_event_point'], pt_ifo['added_event_point'], res['rank'], res['combo_rank'],
                rarity_cnt[3], rarity_cnt[2], rarity_cnt[1], ticket_add, json_dump(reward_items), update_time,
-               s['user_id'], req['event_id'], pair_id)
+               json_dump(req['sub_bonus_flag']), s['user_id'], req['event_id'], pair_id)
     return sql, sql2
+
+
+def festival_last(source, update_time=None):
+    req = source['req_data']
+    res = source['res_data']
+    if update_time is None:
+        update_time = int(time.time())
+    song_diff_ids = []
+    song_set_ids = []
+    for live in res['festival']['event_festival_live_list']:
+        song_diff_ids.append(live['live_difficulty_id'])
+        song_set_ids.append(live_setting_id[live['live_difficulty_id']])
+
+    sql = """INSERT INTO event_festival_last (uid, event_id, last_song_set_ids, last_song_diff_ids, update_time) 
+    VALUES ('{}','{}','{}','{}','{}')
+    ON DUPLICATE KEY UPDATE event_id = VALUES(event_id),last_song_set_ids=VALUES(last_song_set_ids),
+    last_song_diff_ids=VALUES(last_song_diff_ids),update_time=VALUES(update_time)
+    """.format(source['user_id'], req['event_id'], json_dump(song_set_ids), json_dump(song_diff_ids), update_time)
+
+    return sql,
 
 
 def json_dump(json_object, useascii=True):

@@ -18,6 +18,8 @@ nothandle = ['/webview.php', '/main.php/resources', '/main.php/notice', '/main.p
 nothandle_api = ['rewardList', ]
 q = queue.Queue()
 
+pkg_times = {}
+
 
 class LLSIFmodifyRequestHandler(ProxyRequestHandler):
     def request_handler(self, req, req_body):
@@ -28,12 +30,15 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
         if res.status == 502:
             print(res.status, )
             return 502
-        if urlparse.urlsplit(req.path).path == '/main.php/download/batch':
+        req_path = urlparse.urlsplit(req.path).path
+
+        if req_path == '/main.php/download/batch':
             # res_plain = res_body
             try:
                 user_id = int(req.headers["User-ID"])
             except KeyError:
                 user_id = None
+
             try:
                 if req_body:
                     req_json_str = re.search(r"\[?{.*}\]?", req_body.decode()).group()
@@ -42,11 +47,32 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                     req_json = None
 
                 if req_json['package_type'] == 1:
+                    force_down = False
                     if res_body:
                         res_json_str = res_body.decode()
                         res_json = json.loads(res_json_str, object_pairs_hook=OrderedDict)
                     else:
                         return
+                    try:
+                        times = pkg_times[user_id]
+                    except KeyError:
+                        pkg_times[user_id] = [1, int(time.time())]
+                        return
+                    else:
+                        if int(time.time()) - pkg_times[user_id][1] <= 5:
+                            pkg_times[user_id][0] += 1
+                        else:
+                            pkg_times[user_id] = [1, int(time.time())]
+
+                        if pkg_times[user_id][0] >= 3:
+
+                            force_down = True
+                        elif pkg_times[user_id][0] >= 2:
+
+                            print("patch", pkg_times[user_id][0], int(time.time()) - pkg_times[user_id][1])
+                        else:
+                            return
+
                     db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
                     cur = db.cursor(cursor=pymysql.cursors.DictCursor)
                     patch_db = None
@@ -72,26 +98,34 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                             "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 2 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
                                 version))
                         patch_asset = cur.fetchone()
-                    if patch_db and (patch_db['pkg_id'] not in req_json['excluded_package_ids']):
+                    if patch_db and ((patch_db['pkg_id'] not in req_json['excluded_package_ids']) or force_down):
                         res_json['response_data'] += [
                             {
                                 "size": patch_db['pkg_size'],
                                 "url": patch_db['pkg_url']
                             }
                         ]
-                    if patch_asset and (patch_asset['pkg_id'] not in req_json['excluded_package_ids']):
+                    if patch_asset and ((patch_asset['pkg_id'] not in req_json['excluded_package_ids']) or force_down):
                         res_json['response_data'] += [
                             {
                                 "size": patch_asset['pkg_size'],
                                 "url": patch_asset['pkg_url']
                             }
                         ]
+                    if len(res_json['response_data']) > 0 or force_down:
+                        del pkg_times[user_id]
                     res_plain = json.dumps(res_json).encode()
                     res.headers.replace_header('X-Message-Code', gen_xmessagecode(res_plain))
                     return res_plain
             except Exception as e:
                 print(e)
-
+        elif req_path == '/main.php/rlive/lot':
+            try:
+                user_id = int(req.headers["User-ID"])
+            except KeyError:
+                user_id = None
+            if user_id in pkg_times:
+                del pkg_times[user_id]
         return None
 
     def save_handler(self, req, req_body, res, res_body):

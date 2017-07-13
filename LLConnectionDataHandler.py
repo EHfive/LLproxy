@@ -4,6 +4,7 @@ import json
 import pymysql
 import sqlquerys as sq
 import config as cfg
+from mysql import Mysql
 
 battle_dict = {}
 database_q = queue.Queue()
@@ -161,6 +162,8 @@ class DataHandler:
                 put_sqls(sq.effort_point_box(self.id, self.res_data['effort_point']))
                 put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
                 print(result)
+            elif m[1] in ('deckList', 'updateLiveList'):
+                put_sqls(sq.festival_last(self.s))
         elif m[0] == 'user':
             if m[1] == 'userInfo':
                 if 'result' in self.res_data:
@@ -308,7 +311,27 @@ def score_match_thread(u_id):
         info = battle_dict[u_id]['queue'].get()
 
 
+
+
+
 def datainserter():
+    my = Mysql(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME)
+    while True:
+        sqlq = database_q.get()
+        try:
+            my.query(sqlq)
+        except Exception as e:
+            try:
+                my = Mysql(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME)
+            except Exception as e2:
+                print(e)
+                print("\nSQL:\n" + sqlq, end="\n\n")
+                print(e, e2)
+            else:
+                my.query(sqlq)
+
+
+def datainserter_old():
     tag = 0
     db = None
     cur = None
