@@ -9,8 +9,7 @@ def defaultpairs(colnames):
             'colname': colname,
             'pairs': [
                 ('爱心', 'Loveca'),
-                (' 等级', ' Rank'),
-                ('等级 ', 'Rank '),
+                ('将等级', '将Rank'),
                 ('演唱会', 'LIVE'),
                 ('连击', 'COMBO'),
                 ('甜美点数', 'SmileP'),
@@ -299,6 +298,29 @@ if __name__ == '__main__':
                 ('琴梨', '小鸟'),
                 ('小琴', '小鸟'),
                 ('微笑小香香','niconico~ni~')
+
+            ]
+        }
+    ])
+    str_replace('db/unit/unit.db_', 'unit_skill_m', [
+        {
+            'colname': 'name',
+            'pairs': [
+
+                ('日香', '妮可'),
+                ('香香', '妮可'),
+                ('琴梨', '小鸟'),
+
+            ]
+        }
+    ])
+    str_replace('db/unit/unit.db_', 'unit_type_m', [
+        {
+            'colname': 'name',
+            'pairs': [
+
+                ('日香', '妮可'),
+                ('琴梨', '小鸟'),
 
             ]
         }

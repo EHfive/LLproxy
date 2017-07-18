@@ -204,6 +204,26 @@ def festival_record_tran():
         put_sqls(("UPDATE request_cache SET `status`=0 WHERE id = '{}'".format(result['id']),))
 
 
+def festival_coin_tran():
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor()
+    cur.execute("SELECT id,event_festival_item_ids FROM event_festival WHERE coin_cost IS NULL ")
+    res = cur.fetchall()
+    if res is None:
+        return
+    item_cost = [0, 30000, 10000, 5000, 25000, 25000, 50000, 100000,50000]
+    for line in res:
+        item_ids = json.loads(line[1])
+        print(item_ids, end='\t')
+        if len(item_ids) > 0:
+            sum_cost = sum([item_cost[x] for x in item_ids])
+        else:
+            sum_cost = 0
+        cur.execute("UPDATE event_festival SET coin_cost={} WHERE id={}".format(sum_cost, line[0]))
+        db.commit()
+        print(sum_cost)
+
+
 game_db_init()
 
 db_o = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
@@ -216,4 +236,4 @@ def put_sqls(sqls):
         db_o.commit()
 
 
-festival_record_tran()
+festival_coin_tran()

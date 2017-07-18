@@ -151,11 +151,18 @@ class DataHandler:
                 print(result)
             elif m[1] == 'liveReward':
                 cur.execute(
-                    "SELECT curr_pair_id,high_score FROM event_festival_users WHERE uid = {} AND event_id = {}".format(
+                    "SELECT `curr_pair_id`,`high_score`,`status` FROM event_festival_users WHERE uid = {} AND event_id = {}".format(
                         self.id, self.req_data['event_id']
                     ))
                 result = cur.fetchone()
                 if result:
+                    if result['status'] == 1:
+                        cur.execute(
+                            "UPDATE  event_festival_users set curr_pair_id = curr_pair_id + 1 WHERE uid = {} AND event_id = {}".format(
+                                self.id, self.req_data['event_id']
+                            ))
+                        db.commit()
+                        return
                     high_score = result['high_score'] or 0
                     pair_id = result['curr_pair_id']
                     put_sqls(sq.festival_reward(self.s, pair_id, high_score))
@@ -309,9 +316,6 @@ def score_match_thread(u_id):
                     print(x)
 
         info = battle_dict[u_id]['queue'].get()
-
-
-
 
 
 def datainserter():

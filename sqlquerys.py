@@ -663,6 +663,8 @@ def festival_start(source, pair_id, update_time=None):
     total_combo = 0
     guest_bonus = []
     sub_guest_bonus = []
+    item_cost = [0, 30000, 10000, 5000, 25000, 25000, 50000, 100000,50000]
+    sum_cost = sum([item_cost[x] for x in req['event_festival_item_ids']])
     for live in res['live_info']:
         song_diff_ids.append(live['live_difficulty_id'])
         song_set_ids.append(live_setting_id[live['live_difficulty_id']])
@@ -684,11 +686,11 @@ def festival_start(source, pair_id, update_time=None):
     update_time=VALUES(update_time),last_song_set_ids=VALUES(last_song_set_ids)
     """.format(s['user_id'], req['event_id'], pair_id, update_time, json_dump(song_set_ids))
     sql2 = """INSERT INTO event_festival (uid, event_id, `status`, pair_id, song_diff_ids, song_set_ids, update_time, 
-    total_combo, event_festival_item_ids, guest_bonus,sub_guest_bonus) 
-    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}','{}')
+    total_combo, event_festival_item_ids, guest_bonus,sub_guest_bonus,coin_cost) 
+    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}','{}','{}')
     """.format(s['user_id'], req['event_id'], pair_id, json_dump(song_diff_ids), json_dump(song_set_ids),
                update_time, total_combo, json_dump(req['event_festival_item_ids']), json_dump(guest_bonus),
-               json_dump(sub_guest_bonus))
+               json_dump(sub_guest_bonus),sum_cost)
     return sql, sql2
 
 
@@ -742,6 +744,8 @@ def festival_last(source, update_time=None):
         update_time = int(time.time())
     song_diff_ids = []
     song_set_ids = []
+    if 'festival' not in res:
+        return
     for live in res['festival']['event_festival_live_list']:
         song_diff_ids.append(live['live_difficulty_id'])
         song_set_ids.append(live_setting_id[live['live_difficulty_id']])
