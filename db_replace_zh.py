@@ -49,7 +49,40 @@ def str_replace(dbpath, tablename, colpairs):
         db_list.append(dbpath)
 
 
+def song_name_replace(dbpath='db/live/live.db_', jpdb='data/live_jp.db_'):
+    db = sqlite3.connect(dbpath)
+    # db.row_factory = lambda c, r: dict([(col[0], r[idx]) for idx, col in enumerate(c.description)])
+    cur = db.cursor()
+    cur.execute("SELECT live_track_id,name FROM live_track_m")
+    jp_db = sqlite3.connect(jpdb)
+    jp_cur = jp_db.cursor()
+    jp_cur.execute('SELECT live_track_id,name FROM live_track_m')
+    pair = dict(jp_cur.fetchall())
+    for track in cur.fetchall():
+        zh_name=track[1]
+        jp_name=pair[track[0]]
+        cur.execute("UPDATE live_track_m SET `name` = ? WHERE live_track_id = ?", (jp_name, track[0]))
+        str_replace('db/achievement/achievement.db_', 'achievement_m', [
+            {
+                'colname': 'title',
+                'pairs': [
+                    (zh_name, jp_name)
+
+                ]
+            },
+            {
+                'colname': 'description',
+                'pairs': [
+                    (zh_name, jp_name),
+                ]
+            }
+        ])
+        print(pair[track[0]])
+        db.commit()
+
+
 if __name__ == '__main__':
+    song_name_replace()
     str_replace('db/achievement/achievement.db_', 'achievement_m', [
         {
             'colname': 'title',
@@ -297,7 +330,7 @@ if __name__ == '__main__':
                 ('香香', '妮可'),
                 ('琴梨', '小鸟'),
                 ('小琴', '小鸟'),
-                ('微笑小香香','niconico~ni~')
+                ('微笑小香香', 'niconico~ni~')
 
             ]
         }
@@ -333,7 +366,7 @@ if __name__ == '__main__':
                 ('清纯', 'Pure'),
                 ('洒脱', 'Cool'),
                 ('日香', '妮可'),
-                ('微笑小香香','niconico~ni~'),
+                ('微笑小香香', 'niconico~ni~'),
                 ('香香', '妮可'),
                 ('琴梨', '小鸟'),
                 ('小琴', '小鸟')
@@ -355,7 +388,7 @@ if __name__ == '__main__':
             'colname': 'title',
             'pairs': [
                 ('日香', '妮可'),
-                ('微笑小香香','niconico~ni~'),
+                ('微笑小香香', 'niconico~ni~'),
                 ('香香', '妮可'),
                 ('琴梨', '小鸟'),
             ]

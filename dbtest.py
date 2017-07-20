@@ -204,24 +204,32 @@ def festival_record_tran():
         put_sqls(("UPDATE request_cache SET `status`=0 WHERE id = '{}'".format(result['id']),))
 
 
-def festival_coin_tran():
+def festival_exp_tran():
     db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
     cur = db.cursor()
-    cur.execute("SELECT id,event_festival_item_ids FROM event_festival WHERE coin_cost IS NULL ")
+    cur.execute("SELECT id,reward_items FROM event_festival WHERE skill_exp_add IS NULL ")
     res = cur.fetchall()
     if res is None:
         return
-    item_cost = [0, 30000, 10000, 5000, 25000, 25000, 50000, 100000,50000]
+
     for line in res:
-        item_ids = json.loads(line[1])
-        print(item_ids, end='\t')
-        if len(item_ids) > 0:
-            sum_cost = sum([item_cost[x] for x in item_ids])
-        else:
-            sum_cost = 0
-        cur.execute("UPDATE event_festival SET coin_cost={} WHERE id={}".format(sum_cost, line[0]))
+        exp = 0
+        if line[1]:
+            reward_items = json.loads(line[1])
+            for reward in reward_items:
+                if reward['add_type'] == 1001:
+                    unit_id = reward['unit_id']
+                    if unit_id < 379 or unit_id > 1142:
+                        continue
+                    if 382 >= unit_id >= 379:
+                        exp += 10
+                    elif unit_id <= 386:
+                        exp += 100
+                    elif unit_id <= 390 or unit_id == 1085:
+                        exp += 1000
+        cur.execute("update event_festival set skill_exp_add={} WHERE id={}".format(exp, line[0]))
         db.commit()
-        print(sum_cost)
+        print(exp)
 
 
 game_db_init()
@@ -236,4 +244,5 @@ def put_sqls(sqls):
         db_o.commit()
 
 
-festival_coin_tran()
+# festival_exp_tran()
+setting_tran()

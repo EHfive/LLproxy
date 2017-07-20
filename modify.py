@@ -13,12 +13,13 @@ from gen_xmessagecode import gen_xmessagecode
 import config as cfg
 
 host = ['prod.game1.ll.sdo.com', 'mgame.sdo.com']
-nothandle = ['/webview.php', '/main.php/resources', '/main.php/notice', '/main.php/eventscenario',
+nothandle = ['/webview.php', '/main.php/resources', '/main.php/eventscenario',
              '/main.php/personalnotice', '/main.php/tos', '/main.php/subscenario', '/main.php/secretbox/all']
 nothandle_api = ['rewardList', ]
 q = queue.Queue()
 
 pkg_times = {}
+name_dict = json.load(open('data/name_zh_jp.json'))['key_name']
 
 
 class LLSIFmodifyRequestHandler(ProxyRequestHandler):
@@ -31,8 +32,34 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
             print(res.status, )
             return 502
         req_path = urlparse.urlsplit(req.path).path
+        if req_path == '/main.php/notice/noticeFriendVariety':
+            if res_body:
+                res_json_str = res_body.decode()
+                res_json = json.loads(res_json_str, object_pairs_hook=OrderedDict)
+            else:
+                return
+            for key, val in enumerate(res_json['response_data']['notice_list']):
+                if val['notice_template_id'] in (14, 15, 16):
+                    msg = val['message']
+                    try:
+                        a = msg.index('「')
+                        b = msg.index('」')
+                        title = msg[a + 1:b].split(']')
+                        prefix = title[0] + ']' if len(title) == 2 else ''
+                        title = title[1]
+                        jp_name = name_dict[title][0]
+                    except (KeyError, IndexError):
+                        continue
+                    else:
+                        newmsg = msg[0:a + 1] + prefix + jp_name + msg[b:]
+                        if val['notice_template_id'] == 15:
+                            newmsg = newmsg.replace('全连击', 'FULL COMBO')
 
-        if req_path == '/main.php/download/batch':
+                        res_json['response_data']['notice_list'][key]['message'] = newmsg
+            res_plain = json.dumps(res_json).encode()
+            res.headers.replace_header('X-Message-Code', gen_xmessagecode(res_plain))
+            return res_plain
+        elif req_path == '/main.php/download/batch':
             # res_plain = res_body
             try:
                 user_id = int(req.headers["User-ID"])
