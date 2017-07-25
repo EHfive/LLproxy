@@ -55,6 +55,18 @@ class Mysql:
             # print "Error %d: %s" % (e.args[0], e.args[1])
             return False
 
+    def selectone(self, sql=''):
+        try:
+            self._reConn()
+            self.cursor = self.conn.cursor(pymysql.cursors.DictCursor)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchone()
+            self.cursor.close()
+            return result
+        except pymysql.Error as e:
+            # print "Error %d: %s" % (e.args[0], e.args[1])
+            return False
+
     def select_limit(self, sql='', offset=0, length=20):
         sql = '%s limit %d , %d ;' % (sql, offset, length)
         return self.select(sql)

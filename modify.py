@@ -11,6 +11,7 @@ import urllib.parse as urlparse
 import json
 from gen_xmessagecode import gen_xmessagecode
 import config as cfg
+from mysql import Mysql
 
 host = ['prod.game1.ll.sdo.com', 'mgame.sdo.com']
 nothandle = ['/webview.php', '/main.php/resources', '/main.php/eventscenario',
@@ -20,6 +21,7 @@ q = queue.Queue()
 
 pkg_times = {}
 name_dict = json.load(open('data/name_zh_jp.json'))['key_name']
+my = Mysql(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME)
 
 
 class LLSIFmodifyRequestHandler(ProxyRequestHandler):
@@ -38,6 +40,19 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                 res_json = json.loads(res_json_str, object_pairs_hook=OrderedDict)
             else:
                 return
+
+            try:
+                user_id = int(req.headers["User-ID"])
+            except Exception:
+                return
+
+            db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+            cur = db.cursor()
+            cur.execute("select rplc_stat from users WHERE uid = {}".format(user_id))
+            resu = cur.fetchone()
+            if resu[0] == 0:
+                return
+            print("not returned")
             for key, val in enumerate(res_json['response_data']['notice_list']):
                 if val['notice_template_id'] in (14, 15, 16):
                     msg = val['message']
@@ -45,10 +60,15 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                         a = msg.index('「')
                         b = msg.index('」')
                         title = msg[a + 1:b].split(']')
-                        prefix = title[0] + ']' if len(title) == 2 else ''
-                        title = title[1]
+                        if len(title) == 2:
+                            prefix = title[0] + ']'
+                            title = title[1]
+                        else:
+                            title = title[0]
+                            prefix = ''
                         jp_name = name_dict[title][0]
-                    except (KeyError, IndexError):
+                    except (KeyError, IndexError) as e:
+                        print(e)
                         continue
                     else:
                         newmsg = msg[0:a + 1] + prefix + jp_name + msg[b:]

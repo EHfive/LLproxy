@@ -130,6 +130,11 @@ class DataHandler:
                         }
                         put_sqls(sq.pub_live_info(live_id, merge_info))
                         live_maps.append(live_id)
+
+        elif m[0] == 'common':
+            if m[1] == 'recoveryEnergy':
+                put_sqls(sq.recovery(self.s))
+
         elif m[0] == 'festival':
             db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
             cur = db.cursor(cursor=pymysql.cursors.DictCursor)

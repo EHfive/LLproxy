@@ -769,6 +769,15 @@ def festival_last(source, update_time=None):
     return sql,
 
 
+def recovery(source, update_time=None):
+    res = source['res_data']
+    if update_time is None:
+        update_time = int(time.time())
+    sql = """insert into recovery (uid, energy_max,over_max_energy, before_sns_coin, after_sns_coin, update_time) VALUES 
+    ('{}','{}','{}','{}','{}','{}')""".format(source['user_id'], res['energy_max'], res['over_max_energy'],
+                                              res['before_sns_coin'], res['after_sns_coin'], update_time)
+    return sql,
+
 def json_dump(json_object, useascii=True):
     return escape_string(json.dumps(json_object, separators=(',', ':'), ensure_ascii=useascii))
 

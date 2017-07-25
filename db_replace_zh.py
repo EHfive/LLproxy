@@ -57,10 +57,13 @@ def song_name_replace(dbpath='db/live/live.db_', jpdb='data/live_jp.db_'):
     jp_db = sqlite3.connect(jpdb)
     jp_cur = jp_db.cursor()
     jp_cur.execute('SELECT live_track_id,name FROM live_track_m')
+
     pair = dict(jp_cur.fetchall())
     for track in cur.fetchall():
-        zh_name=track[1]
-        jp_name=pair[track[0]]
+        zh_name = track[1]
+        jp_name = pair[track[0]]
+        if zh_name == jp_name:
+            continue
         cur.execute("UPDATE live_track_m SET `name` = ? WHERE live_track_id = ?", (jp_name, track[0]))
         str_replace('db/achievement/achievement.db_', 'achievement_m', [
             {
@@ -77,12 +80,12 @@ def song_name_replace(dbpath='db/live/live.db_', jpdb='data/live_jp.db_'):
                 ]
             }
         ])
-        print(pair[track[0]])
+        print(zh_name, '=>', jp_name)
         db.commit()
-
+    db_list.append(dbpath)
 
 if __name__ == '__main__':
-    song_name_replace()
+    song_name_replace(dbpath='db/live/live.db_', jpdb='data/live_jp.db_')
     str_replace('db/achievement/achievement.db_', 'achievement_m', [
         {
             'colname': 'title',
@@ -181,6 +184,7 @@ if __name__ == '__main__':
                 ('经验值', 'EXP'),
                 ('经验', 'EXP'),
                 ('全连击', 'FULL COMBO'),
+                ('歌曲全连', '歌曲FULL COMBO'),
                 ('连击', 'COMBO'),
                 ('得分', 'SCORE'),
                 ('绊点数', '绊pt'),
