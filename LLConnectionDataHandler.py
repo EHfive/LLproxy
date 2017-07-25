@@ -219,6 +219,26 @@ class DataHandler:
                 put_sqls(sq.deck_info(self.s, True))
             elif m[1] == 'removableSkillInfo':
                 put_sqls(sq.removeable_skill_info(self.s))
+            elif m[1] == 'removableSkillEquipment':
+                db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+                cur = db.cursor(cursor=pymysql.cursors.DictCursor)
+                ids = lambda ownid: cur.execute(
+                    "select unit_removable_skill_id from unit_unitAll WHERE unit_owning_user_id = '{}'".format(
+                        ownid)) and cur.fetchone()['unit_removable_skill_id']
+                for rmv in self.req_data['remove']:
+                    str_ids = ids(rmv['unit_owning_user_id'])
+                    rmv_ids = str_ids.split(',') if str_ids else []
+                    sid = str(rmv['unit_removable_skill_id'])
+                    if sid in rmv_ids:
+                        rmv_ids.remove(sid)
+                    put_sqls(sq.update_removable(rmv['unit_owning_user_id'], rmv_ids))
+                for rmv in self.req_data['equip']:
+                    str_ids = ids(rmv['unit_owning_user_id'])
+                    rmv_ids = str_ids.split(',') if str_ids else []
+                    sid = str(rmv['unit_removable_skill_id'])
+                    if sid not in rmv_ids:
+                        rmv_ids.append(sid)
+                    put_sqls(sq.update_removable(rmv['unit_owning_user_id'], rmv_ids))
             elif m[1] == 'setDisplayRank':
                 put_sqls(sq.display_rank({
                     'unit_owning_user_id': self.req_data['unit_owning_user_id'],

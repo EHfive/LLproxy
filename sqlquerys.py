@@ -391,9 +391,7 @@ def removeable_skill_info(source, update_time=None):
                            escape_string(json.dumps(res, separators=(',', ':'), ensure_ascii=False)))
     sqln.append(sql)
     for k, v in res['equipment_info'].items():
-        detail = []
-        for x in v['detail']:
-            detail.append(str(x['unit_removable_skill_id']))
+        detail = [str(x['unit_removable_skill_id']) for x in v['detail']]
         sqli = """
         UPDATE `llproxy`.`unit_unitAll` SET `unit_removable_skill_id` = '{}' WHERE `unit_unitAll`.`unit_owning_user_id` = {} 
         """.format(','.join(detail), v['unit_owning_user_id'])
@@ -778,8 +776,14 @@ def recovery(source, update_time=None):
                                               res['before_sns_coin'], res['after_sns_coin'], update_time)
     return sql,
 
+
 def json_dump(json_object, useascii=True):
     return escape_string(json.dumps(json_object, separators=(',', ':'), ensure_ascii=useascii))
 
+
+def update_removable(owning_id, skill_ids):
+    sql = "update unit_unitAll set unit_removable_skill_id = '{}' WHERE unit_owning_user_id = '{}'".format(
+        ','.join([str(x) for x in skill_ids]), owning_id)
+    return sql,
 
 game_db_init()
