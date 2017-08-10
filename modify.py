@@ -12,6 +12,7 @@ import json
 from gen_xmessagecode import gen_xmessagecode
 import config as cfg
 from mysql import Mysql
+import requests as rq
 
 host = ['prod.game1.ll.sdo.com', 'mgame.sdo.com']
 nothandle = ['/webview.php', '/main.php/resources', '/main.php/eventscenario',
@@ -92,8 +93,24 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                     req_json = json.loads(req_json_str)
                 else:
                     req_json = None
-
-                if req_json['package_type'] == 1:
+                if req_json['package_type'] == 4:
+                    return
+                    # if res_body:
+                    #     res_json_str = res_body.decode()
+                    #     res_json = json.loads(res_json_str, object_pairs_hook=OrderedDict)
+                    # else:
+                    #     return
+                    # if 13002 not in req_json['excluded_package_ids']:
+                    #     res_json['response_data'] += [
+                    #         {
+                    #             "size": 115630,
+                    #             "url": "http://cos.sokka.cn/patch/fix_13002.zip"
+                    #         }
+                    #     ]
+                    # res_plain = json.dumps(res_json).encode()
+                    # res.headers.replace_header('X-Message-Code', gen_xmessagecode(res_plain))
+                    # return res_plain
+                elif req_json['package_type'] == 1:
                     force_down = False
                     if res_body:
                         res_json_str = res_body.decode()
@@ -106,7 +123,7 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                         pkg_times[user_id] = [1, int(time.time())]
                         return
                     else:
-                        if int(time.time()) - pkg_times[user_id][1] <= 5:
+                        if int(time.time()) - pkg_times[user_id][1] <= 15:
                             pkg_times[user_id][0] += 1
                         else:
                             pkg_times[user_id] = [1, int(time.time())]
@@ -122,43 +139,36 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
 
                     db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
                     cur = db.cursor(cursor=pymysql.cursors.DictCursor)
-                    patch_db = None
-                    patch_asset = None
                     version = req.headers.get('Client-Version')
                     if user_id in [865384, 5012675]:
-                        cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type >=0 AND patch_type = 1 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
-                                version))
-
-                        patch_db = cur.fetchone()
-                        cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type >= 0 AND patch_type = 2 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
-                                version))
-                        patch_asset = cur.fetchone()
+                        pub_type = 0
                     else:
-                        cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 1 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
-                                version))
+                        pub_type = 1
 
-                        patch_db = cur.fetchone()
-                        cur.execute(
-                            "SELECT * FROM patch_anti WHERE public_type = 1 AND patch_type = 2 AND pkg_version LIKE '{}' ORDER BY update_date DESC ".format(
-                                version))
-                        patch_asset = cur.fetchone()
-                    if patch_db and ((patch_db['pkg_id'] not in req_json['excluded_package_ids']) or force_down):
-                        res_json['response_data'] += [
-                            {
-                                "size": patch_db['pkg_size'],
-                                "url": patch_db['pkg_url']
-                            }
-                        ]
-                    if patch_asset and ((patch_asset['pkg_id'] not in req_json['excluded_package_ids']) or force_down):
-                        res_json['response_data'] += [
-                            {
-                                "size": patch_asset['pkg_size'],
-                                "url": patch_asset['pkg_url']
-                            }
-                        ]
+                    sql = """SELECT s.*
+                    FROM (SELECT max(update_date) AS update_date FROM `patch_anti` WHERE pkg_version LIKE '{}' AND 
+                    public_type >= '{}' GROUP BY `patch_type` LIMIT 10) t
+                    LEFT JOIN `patch_anti` AS s ON t.update_date=s.update_date""".format(version, pub_type)
+                    cur.execute(sql)
+                    resu = cur.fetchall()
+                    if not resu:
+                        return
+                    for patch in resu:
+                        if patch and ((patch['pkg_id'] not in req_json['excluded_package_ids']) or force_down):
+                            try:
+                                respon = rq.head(patch['pkg_url'])
+                                if respon.status_code == 404:
+                                    continue
+                                pkg_size = int(respon.headers.get("Content-Length"))
+                            except:
+                                pkg_size = patch['pkg_size']
+                            res_json['response_data'] += [
+                                {
+                                    "size": pkg_size,
+                                    "url": patch['pkg_url']
+                                }
+                            ]
+
                     if len(res_json['response_data']) > 0 or force_down:
                         del pkg_times[user_id]
                     res_plain = json.dumps(res_json).encode()
@@ -219,7 +229,8 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
             print("headers中未找到指定头")
 
         except json.decoder.JSONDecodeError as e:
-            raise e
+            print(e, "JSONDecodeError line232")
+            return
         except Exception as e:
             print(e)
 

@@ -144,7 +144,10 @@ def replace_unit(uid, unit_info_array, update_time=None):
         unit_id = i['unit_id']
         cur.execute("SELECT unit_number,unit_type_id,rarity,attribute_id FROM unit_m WHERE unit_id = %s" % unit_id)
         u = cur.fetchone()
-        s = "('{}','{}','{}','{}','{}','{}','{}'".format(uid, update_time, 1, u[0], u[1], u[2], u[3])
+        if u:
+            s = "('{}','{}','{}','{}','{}','{}','{}'".format(uid, update_time, 1, u[0], u[1], u[2], u[3])
+        else:
+            s = "('{}','{}','{}',NULL,NULL,NULL,NULL".format(uid, update_time, 1)
         for k in i.values():
             if k is True:
                 k = 1
@@ -549,9 +552,9 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
         update_time = int(time.time())
     sqln = []
     if s_proceed:
-        challenge_items = json.dumps(s_proceed['req_data']['event_challenge_item_ids'])
+        challenge_items = s_proceed['req_data']['event_challenge_item_ids']
     else:
-        challenge_items = '[]'
+        challenge_items = []
     req = s_check['req_data']
     res = s_check['res_data']
     try:
@@ -564,11 +567,18 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
     for mission in chall_res['mission_result']:
         if mission['bonus_type'] == 3050:
             lp += int(mission['bonus_param'])
+    item_cost = [0, 15000, 5000, 12500, 12500, 25000, 50000, 0]
+    try:
+        sum_cost = sum([item_cost[x] for x in challenge_items])
+    except:
+        sum_cost = 0
+    challenge_items = json_dump(sum_cost)
     if finalized:
         sql = """
-            update  `event_challenge_pairs` set `curr_round`='{}',finalized={},update_time='{}',round_setid_{}='{}',lp_add=lp_add+{}
-            WHERE uid={} AND pair_id= {}
-            """.format(round_n, finalized, update_time, round_n, setid, lp, s_check['user_id'], pair_id)
+            update  `event_challenge_pairs` set `curr_round`='{}',finalized={},update_time='{}',round_setid_{}='{}',
+            lp_add=lp_add+{}, coin_cost=coin_cost+{}
+            WHERE uid= {} AND pair_id= {}
+            """.format(round_n, finalized, update_time, round_n, setid, lp, sum_cost, s_check['user_id'], pair_id)
         sqln.append(sql)
     elif res['challenge_info']:
         reward_i = res['challenge_info']['accumulated_reward_info']
@@ -579,11 +589,11 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
         sql = """
             update  `event_challenge_pairs` set `curr_round`='{}',finalized={},player_exp='{}',game_coin='{}',
             event_point='{}',rarity_3_cnt='{}',rarity_2_cnt='{}',rarity_1_cnt='{}',update_time='{}',round_setid_{}={},
-            lp_add=lp_add+{}
+            lp_add=lp_add+{}, coin_cost=coin_cost+{}
             WHERE uid={} AND pair_id= {}
             """.format(round_n, finalized, reward_i['player_exp'], reward_i['game_coin'], reward_i['event_point'],
                        rarity_l[3], rarity_l[2], rarity_l[1], update_time, round_n, setid,
-                       lp, s_check['user_id'], pair_id)
+                       lp, sum_cost, s_check['user_id'], pair_id)
         sqln.append(sql)
 
     sql2 = """
@@ -595,15 +605,15 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
     {},'{}','{}','{}','{}','{}','{}','{}',
     '{}',{},'{}','{}','{}','{}','{}',
     '{}','{}','{}'
-    )""".format(pair_id, round_n, update_time, s_check['user_id'], setid, linf['live_difficulty_id'], linf['is_random'],
-                linf['dangerous'], linf['use_quad_point'], req['score_smile'] + req['score_cute'] + req['score_cool'],
-                req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['miss_cnt'],
-                req['max_combo'], req['love_cnt'], 'NULL', req['event_id'], chall_res['reward_info']['event_point'],
-                chall_res['rank'], chall_res['combo_rank'], escape_string(json.dumps(chall_res['mission_result'])),
-                escape_string(json.dumps(chall_res['reward_info']['reward_rarity_list'])),
-                escape_string(json.dumps(chall_res['bonus_list'])), escape_string(challenge_items)
-
-                )
+    )""".format(
+        pair_id, round_n, update_time, s_check['user_id'], setid, linf['live_difficulty_id'], linf['is_random'],
+        linf['dangerous'], linf['use_quad_point'], req['score_smile'] + req['score_cute'] + req['score_cool'],
+        req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['miss_cnt'],
+        req['max_combo'], req['love_cnt'], 'NULL', req['event_id'], chall_res['reward_info']['event_point'],
+        chall_res['rank'], chall_res['combo_rank'], escape_string(json.dumps(chall_res['mission_result'])),
+        escape_string(json.dumps(chall_res['reward_info']['reward_rarity_list'])),
+        escape_string(json.dumps(chall_res['bonus_list'])), escape_string(challenge_items)
+    )
     sqln.append(sql2)
     return sqln
 
@@ -615,18 +625,33 @@ def challenge_finalize(source, pair_id, update_time=None):
     eventp = res['event_info']['event_point_info']
     rarity_l = [0, 0, 0, 0]
     ticket = 0
+    exp = 0
     for r in res['reward_item_list']:
         rarity_l[r['rarity']] += 1
         if r['add_type'] == 1000 and r['item_id'] == 1:
             ticket += r['amount']
+        elif r['add_type'] == 1001:
+            try:
+                unit_id = r['unit_id']
+            except KeyError:
+                continue
 
+            if unit_id < 379 or unit_id > 1142:
+                continue
+            if 382 >= unit_id >= 379:
+                exp += 10
+            elif unit_id <= 386 or unit_id == 1050:
+                exp += 100
+            elif unit_id <= 390 or unit_id == 1085:
+                exp += 1000
     sql = """
     UPDATE event_challenge_pairs SET finalized=1,player_exp='{}',game_coin='{}',event_point='{}',after_event_point='{}',
-    total_event_point='{}',added_event_point='{}',reward_item_list='{}',update_time='{}',rarity_3_cnt={},rarity_2_cnt={},rarity_1_cnt={},ticket_add={} WHERE uid = '{}' AND pair_id='{}'
+    total_event_point='{}',added_event_point='{}',reward_item_list='{}',update_time='{}',rarity_3_cnt={},rarity_2_cnt={}
+    ,rarity_1_cnt={},ticket_add={},skill_exp_add={} WHERE uid = '{}' AND pair_id='{}'
     """.format(res['base_reward_info']['player_exp'], res['base_reward_info']['game_coin'],
                eventp['added_event_point'], eventp['after_event_point'], eventp['after_total_event_point'],
                eventp['added_event_point'], escape_string(json.dumps(res['reward_item_list'])), update_time,
-               rarity_l[3], rarity_l[2], rarity_l[1], ticket,
+               rarity_l[3], rarity_l[2], rarity_l[1], ticket, exp,
                source['user_id'], pair_id
                )
     sql2 = """
@@ -719,7 +744,7 @@ def festival_reward(source, pair_id, score, update_time=None):
                     continue
                 if 382 >= unit_id >= 379:
                     exp += 10
-                elif unit_id <= 386:
+                elif unit_id <= 386 or unit_id == 1050:
                     exp += 100
                 elif unit_id <= 390 or unit_id == 1085:
                     exp += 1000
@@ -785,5 +810,6 @@ def update_removable(owning_id, skill_ids):
     sql = "update unit_unitAll set unit_removable_skill_id = '{}' WHERE unit_owning_user_id = '{}'".format(
         ','.join([str(x) for x in skill_ids]), owning_id)
     return sql,
+
 
 game_db_init()
