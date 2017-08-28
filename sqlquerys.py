@@ -767,7 +767,7 @@ def festival_reward(source, pair_id, score, update_time=None):
     sql2 = """UPDATE event_festival SET perfect_cnt='{}',great_cnt='{}',good_cnt='{}',bad_cnt='{}',miss_cnt='{}',
     max_combo='{}',score='{}',love_cnt='{}',`status`=1,total_event_point='{}', added_event_point='{}', rank='{}', 
     combo_rank='{}', rarity_3_cnt='{}', rarity_2_cnt='{}', rarity_1_cnt='{}', ticket_add='{}', reward_items='{}',
-    update_time='{}' ,sub_bonus_flag='{}',skill_exp_add='{}',coin_reward WHERE uid ='{}' AND event_id ='{}' AND pair_id ='{}'
+    update_time='{}' ,sub_bonus_flag='{}',skill_exp_add='{}',coin_reward='{}' WHERE uid ='{}' AND event_id ='{}' AND pair_id ='{}'
     """.format(req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['miss_cnt'], req['max_combo'],
                score_curr, req['love_cnt'],
                pt_ifo['after_total_event_point'], pt_ifo['added_event_point'], res['rank'], res['combo_rank'],
