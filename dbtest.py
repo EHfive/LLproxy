@@ -152,6 +152,38 @@ def challenge_tran():
         print(pair_id, lp, uid)
 
 
+def challenge_lp_tran(event_id, start=0):
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor()
+
+    sql = "SELECT pair_id,uid,id FROM event_challenge_pairs WHERE event_id = %s AND id> %d" % (event_id, start)
+    cur.execute(sql)
+    mm = []
+    last_id = start
+    for pair in cur.fetchall():
+        pair_id = pair[0]
+        uid = pair[1]
+        last_id = pair[2]
+        sql = "select mission_result from event_challenge WHERE pair_id = %s AND uid = %s AND event_id = %s" % (
+            pair_id, uid, event_id)
+        cur.execute(sql)
+        lp = 0
+        for line in cur.fetchall():
+            if line:
+                for mission in json.loads(line[0]):
+                    if mission['achieved']:
+                        if mission['bonus_type'] == 3050:
+                            lp += int(mission['bonus_param'])
+                        elif 30 >= float(mission['bonus_param']) >= 10:
+                            mm.append((mission['bonus_type'], mission['bonus_param']))
+        cur.execute("update event_challenge_pairs set lp_add = %s WHERE id = %s" % (lp, pair[2]))
+        db.commit()
+        print(pair_id, lp, uid)
+    for m in mm:
+        print(m)
+    return last_id
+
+
 def festival_record_tran():
     db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
     cur = db.cursor()
@@ -232,6 +264,33 @@ def festival_exp_tran():
         print(exp)
 
 
+def challenge_reward_tran(event_id, start=0):
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor()
+
+    sql = "SELECT id,reward_item_list FROM event_challenge_pairs WHERE reward_item_list IS NOT NULL AND event_id = %s AND id> %d" % (
+        event_id, start)
+    cur.execute(sql)
+    mm = []
+    last_id = start
+    for pair in cur.fetchall():
+        last_id = pair[0]
+        coin = 0
+        try:
+            rewards = json.loads(pair[1])
+        except:
+            continue
+        for r in rewards:
+            if r['add_type'] == 3000:
+                coin += r['amount']
+        cur.execute("update event_challenge_pairs set coin_reward = %s WHERE id = %s" % (coin, pair[0]))
+        db.commit()
+        print(last_id, "=>", coin)
+    for m in mm:
+        print(m)
+    return last_id
+
+
 game_db_init()
 
 db_o = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
@@ -245,4 +304,26 @@ def put_sqls(sqls):
 
 
 # festival_exp_tran()
-setting_tran()
+if __name__ == "__main__":
+    # try:
+    #     pre_id = json.load(open("last_lp_tran_id.json"))['last_id']
+    # except:
+    #     pre_id = 0
+    # print("lp tran start at", pre_id)
+    # lastid = challenge_lp_tran(80, pre_id)
+    # print("Last id", lastid)
+    # json.dump(
+    #     {"last_id": lastid},
+    #     open("last_lp_tran_id.json", 'w')
+    # )
+    try:
+        pre_id = json.load(open("last_lp_tran_id.json"))['last_reward_tran_id']
+    except:
+        pre_id = 0
+    print("lp tran start at", pre_id)
+    lastid = challenge_reward_tran(80, pre_id)
+    print("Last id", lastid)
+    json.dump(
+        {"last_reward_tran_id": lastid},
+        open("last_lp_tran_id.json", 'w')
+    )

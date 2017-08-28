@@ -55,7 +55,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
     cacert = join_with_script_dir('ca.crt')
     certkey = join_with_script_dir('cert.key')
     certdir = join_with_script_dir('certs/')
-    timeout = 60
+    timeout = 5
     lock = threading.Lock()
 
     def __init__(self, *args, **kwargs):
@@ -150,8 +150,11 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
             return
         elif req_body_modified is not None:
             req_body = req_body_modified
-            req.headers['Content-length'] = str(len(req_body))
-
+            #req.headers['Content-length'] = str(len(req_body))
+            try:
+                req.headers.replace_header('Content-Length', str(len(req_body)))
+            except KeyError:
+                pass
 
         u = urlparse.urlsplit(req.path)
         scheme, netloc, path = u.scheme, u.netloc, (u.path + '?' + u.query if u.query else u.path)
@@ -197,7 +200,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         if res_body_modified is False:
             self.send_error(403)
             return
-        if res_body_modified == 502:
+        elif res_body_modified == 502:
             self.send_error(502)
             return
         elif res_body_modified is not None:
@@ -395,7 +398,8 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         return res_body
 
     def save_handler(self, req, req_body, res, res_body):
-        self.print_info(req, req_body, res, res_body)
+        #self.print_info(req, req_body, res, res_body)
+        print(req.path)
 
 
 def test(HandlerClass=ProxyRequestHandler, ServerClass=ThreadingHTTPServer, protocol="HTTP/1.1"):

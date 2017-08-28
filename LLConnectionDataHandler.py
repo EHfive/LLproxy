@@ -1,14 +1,68 @@
-import threading
-import queue
 import json
+import queue
+import threading
 import pymysql
-import sqlquerys as sq
 import config as cfg
+import sqlquerys as sq
 from mysql import Mysql
+from pll_tools import user_cache
+import redis as rds
+from pll_tools.db_tools import is_judge_card
+
+# import traceback
+
+r = rds.StrictRedis(host='localhost')
 
 battle_dict = {}
 database_q = queue.Queue()
 live_maps = []
+
+
+def jugde_card_set(uid, deck_info):
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor()
+    for deck in deck_info:
+        cnt = 0
+        for owning in deck['unit_owning_user_ids']:
+            ownid = owning['unit_owning_user_id']
+            try:
+                code = r.get(ownid)
+                if code is None:
+                    cur.execute("select unit_id from unit_unitAll WHERE unit_owning_user_id = {}".format(ownid))
+                    unit_id = cur.fetchone()[0]
+                    code = is_judge_card(unit_id)
+                    assert code != -1
+                    r.set(ownid, code)
+                else:
+                    code = int(code)
+            except:
+                cnt = -1
+                break
+            if code == 1:
+                cnt += 1
+        if cnt == -1:
+            continue
+        k = ','.join([
+            str(uid),
+            'deck',
+            str(deck['unit_deck_id'])
+        ])
+        print(k, '=>', cnt)
+        r.set(k, cnt)
+
+
+def get_deck_judge(uid, deckid):
+    try:
+        k = ','.join([
+            str(uid),
+            'deck',
+            str(deckid)
+        ])
+        code = r.get(k) or -1
+    except:
+        code = -1
+    print(code)
+    return code
 
 
 def val_init():
@@ -48,13 +102,19 @@ class DataHandler:
         elif m[0] == 'mission':
             if m[1] == 'proceed':
                 battle_dict[self.id] = self.s
-                put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
+                print("battle_dict length", len(battle_dict))
+                try:
+                    put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
+                except KeyError:
+                    print("challenge proceed 无 after_user_info")
         elif m[0] == 'challenge':
             if m[1] == 'checkpoint':
                 if self.id in battle_dict:
                     s_proceed = battle_dict[self.id]
+                    jugde_card = get_deck_judge(self.id, s_proceed['req_data']['unit_deck_id'])
                 else:
                     s_proceed = None
+                    jugde_card = -1
                 db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
                 cur = db.cursor(cursor=pymysql.cursors.DictCursor)
                 event_id = self.req_data['event_id']
@@ -102,7 +162,8 @@ class DataHandler:
                 }))
                 if need_init:
                     put_sqls(sq.challenge_pair_init(self.id, event_id, pair_id))
-                put_sqls(sq.challenge_proceed(s_proceed, self.s, pair_id, round_n, final))
+
+                put_sqls(sq.challenge_proceed(s_proceed, self.s, pair_id, round_n, final, jugde_card))
                 put_sqls(sq.effort_point_box(self.id, self.res_data['effort_point']))
             elif m[1] == 'finalize':
                 put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
@@ -116,11 +177,26 @@ class DataHandler:
 
         elif m[0] in ('live', 'rlive'):
             if m[1] == 'reward' and '/reward' in self.s['path']:
-                put_sqls(sq.live_play(self.s))
+                try:
+                    deckid = r.get(','.join([
+                        str(self.id),
+                        'deck'
+                    ]))
+                except:
+                    deckid = None
+                jugde_card = get_deck_judge(self.id, deckid) if deckid else -1
+                put_sqls(sq.live_play(self.s, jugde_card))
                 put_sqls(sq.effort_point_box(self.id, self.res_data['effort_point']))
                 put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
                 print("live reward inserted")
             elif m[1] == 'play':
+                try:
+                    r.set(','.join([
+                        str(self.id),
+                        'deck'
+                    ]), self.req_data['unit_deck_id'])
+                except:
+                    pass
                 for rank_info, live_info in zip(self.res_data['rank_info'], self.res_data['live_info']):
                     live_id = live_info['live_difficulty_id']
                     if live_id not in live_maps:
@@ -151,8 +227,8 @@ class DataHandler:
 
                 else:
                     pair_id = 1
-
-                put_sqls(sq.festival_start(self.s, pair_id))
+                jugde_card = get_deck_judge(self.id, self.req_data['unit_deck_id'])
+                put_sqls(sq.festival_start(self.s, pair_id, jugde_card))
                 print(result)
             elif m[1] == 'liveReward':
                 cur.execute(
@@ -194,6 +270,7 @@ class DataHandler:
                     'unit_owning_user_id': self.res_data['result']['user']['unit_owning_user_id']
                 }))
             elif m[1] == 'changeNavi':
+                print("battle_dict", len(battle_dict), battle_dict)
                 put_sqls(sq.user_navi({
                     'uid': self.id,
                     'unit_owning_user_id': self.req_data['unit_owning_user_id']
@@ -215,8 +292,13 @@ class DataHandler:
 
             elif m[1] == 'deckInfo':
                 put_sqls(sq.deck_info(self.s))
+                deck_info = self.res_data['result']
+                jugde_card_set(self.id, deck_info)
             elif m[1] == 'deck':
                 put_sqls(sq.deck_info(self.s, True))
+                deck_info = self.req_data['unit_deck_list']
+                jugde_card_set(self.id, deck_info)
+
             elif m[1] == 'removableSkillInfo':
                 put_sqls(sq.removeable_skill_info(self.s))
             elif m[1] == 'removableSkillEquipment':
@@ -225,19 +307,24 @@ class DataHandler:
                 ids = lambda ownid: cur.execute(
                     "select unit_removable_skill_id from unit_unitAll WHERE unit_owning_user_id = '{}'".format(
                         ownid)) and cur.fetchone()['unit_removable_skill_id']
+                cache_rmv = set()
                 for rmv in self.req_data['remove']:
                     str_ids = ids(rmv['unit_owning_user_id'])
                     rmv_ids = str_ids.split(',') if str_ids else []
                     sid = str(rmv['unit_removable_skill_id'])
                     if sid in rmv_ids:
                         rmv_ids.remove(sid)
+                    print("removed", rmv_ids)
+                    cache_rmv.add(sid)
                     put_sqls(sq.update_removable(rmv['unit_owning_user_id'], rmv_ids))
                 for rmv in self.req_data['equip']:
                     str_ids = ids(rmv['unit_owning_user_id'])
                     rmv_ids = str_ids.split(',') if str_ids else []
+                    rmv_ids = list(set(rmv_ids) - cache_rmv)
                     sid = str(rmv['unit_removable_skill_id'])
                     if sid not in rmv_ids:
                         rmv_ids.append(sid)
+                    print("equiped", rmv_ids)
                     put_sqls(sq.update_removable(rmv['unit_owning_user_id'], rmv_ids))
             elif m[1] == 'setDisplayRank':
                 put_sqls(sq.display_rank({
@@ -298,8 +385,9 @@ def score_match_thread(u_id):
             put_sqls(sq.score_match_status_0(u_id, event_id, room_id, res))
             playtag = 1
         elif act == 'liveStart':
+            jugde_card = get_deck_judge(u_id, req['unit_deck_id'])
             put_sqls(sq.score_match_status_0(u_id, event_id, room_id, final_room_info['res_data']))
-            put_sqls(sq.score_match_status_1(u_id, event_id, room_id, res))
+            put_sqls(sq.score_match_status_1(u_id, event_id, room_id, req, jugde_card))
             live_info = res['live_info'][0]
             liveinfo = {
                 'live_difficulty_id': live_info['live_difficulty_id'],

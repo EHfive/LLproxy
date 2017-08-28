@@ -205,12 +205,12 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
     if 'live_info' in res:
         sql1 = """
         INSERT INTO `llproxy`.`score_match` (`uid`, `status`, `event_id`, `event_battle_room_id`, `event_rank`, `total_event_point`, `added_event_point`, `unit_id`, `display_rank`,
-         `setting_award_id`, `live_difficulty_id`, `live_setting_id`,`use_quad_point`, `is_random`, `dangerous`,`update_time`)
-    VALUES ('{}', '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}', '{}', {},{}, {}, {},{});
+         `setting_award_id`, `live_difficulty_id`, `live_setting_id`,`use_quad_point`, `is_random`, `dangerous`,`update_time`,`judge_card`)
+    VALUES ('{}', '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}', '{}', {},{}, {}, {},{},{});
         """.format(event_id, uid, 0, event_id, room_id, event_rank, total_event_point, 0, unit_id, display_rank,
                    setting_award_id, res['live_info'][0]['live_difficulty_id'], setting_id,
                    res['live_info'][0]['use_quad_point'],
-                   res['live_info'][0]['is_random'], res['live_info'][0]['dangerous'], update_time)
+                   res['live_info'][0]['is_random'], res['live_info'][0]['dangerous'], update_time, -1)
         sql.append(sql1)
 
         sql2 = """
@@ -233,11 +233,11 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
     return sql
 
 
-def score_match_status_1(uid, event_id, room_id, res, update_time=None):
+def score_match_status_1(uid, event_id, room_id, req, judge_card=-1, update_time=None):
     if update_time is None:
         update_time = int(time.time())
-    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '1',`update_time`={} WHERE uid = {} AND event_battle_room_id ={};".format(
-        event_id, update_time, uid, room_id)
+    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '1',`update_time`={},`judge_card`={} WHERE uid = {} AND event_battle_room_id ={};".format(
+        event_id, update_time, judge_card, uid, room_id)
     sql2 = "UPDATE `llproxy`.`score_match_rooms` SET `status` = '1',`update_time`={} WHERE  event_battle_room_id ={};".format(
         event_id, update_time, room_id)
     return sql1, sql2
@@ -285,7 +285,7 @@ def score_match_status_3(uid, event_id, room_id, res, update_time=None):
     return sql1, sql2
 
 
-def live_play(source, update_time=None):
+def live_play(source, judge_card=-1, update_time=None):
     if update_time is None:
         update_time = int(time.time())
     sqln = []
@@ -333,26 +333,26 @@ def live_play(source, update_time=None):
 
         sqle = """
             INSERT INTO `llproxy`.`event_traditional` (`id`, `update_time`, `uid`,`live_setting_id`, `live_difficulty_id`, `is_random`, `dangerous`,`use_quad_point`, `score`, 
-            `perfect_cnt`, `great_cnt`, `good_cnt`, `bad_cnt`, `miss_cnt`, `max_combo`, `love_cnt`, `no_judge_card`, `event_id`, `event_point`,
-            `total_event_point`,`added_event_point`,`event_rewards_item_id`,`event_rewards_add_type`,`event_rewards_amount`,`is_event_song`)
-             VALUES (NULL, '{}', '{}', {},'{}', {}, {}, {},'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', NULL, {}, '{}', '{}', '{}', '{}', '{}', '{}',{})
+            `perfect_cnt`, `great_cnt`, `good_cnt`, `bad_cnt`, `miss_cnt`, `max_combo`, `love_cnt`, `event_id`, `event_point`,
+            `total_event_point`,`added_event_point`,`event_rewards_item_id`,`event_rewards_add_type`,`event_rewards_amount`,`is_event_song`,`judge_card`)
+             VALUES (NULL, '{}', '{}', {},'{}', {}, {}, {},'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}', '{}', '{}', '{}', '{}', '{}',{},{})
             """.format(update_time, uid, setting_id, live_info[0], live_info[1], live_info[2], live_info[3],
                        score_info[0],
                        notes_info[0], notes_info[1], notes_info[2], notes_info[3], notes_info[4], notes_info[5],
                        score_info[1], eventIFO[0], eventIFO[1],
                        eventIFO[2], eventIFO[3], ','.join(item_ids), ','.join(add_types), ','.join(amounts),
-                       iseventsong
+                       iseventsong, judge_card
                        )
         sqln.append(sqle)
 
     sql = """
     INSERT INTO `llproxy`.`live` (`id`, `update_time`, `uid`,`live_setting_id`, `live_difficulty_id`, `is_random`, `dangerous`,`use_quad_point`, `score`, 
-    `perfect_cnt`, `great_cnt`, `good_cnt`, `bad_cnt`, `miss_cnt`, `max_combo`, `love_cnt`, `no_judge_card`, `event_id`, `event_point`)
-     VALUES (NULL, '{}', '{}',{}, '{}', {}, {}, {},'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', NULL, {}, '{}')
+    `perfect_cnt`, `great_cnt`, `good_cnt`, `bad_cnt`, `miss_cnt`, `max_combo`, `love_cnt`,  `event_id`, `event_point`,`judge_card`)
+     VALUES (NULL, '{}', '{}',{}, '{}', {}, {}, {},'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}',{})
     """.format(update_time, uid, setting_id, live_info[0], live_info[1], live_info[2], live_info[3],
                score_info[0],
                notes_info[0], notes_info[1], notes_info[2], notes_info[3], notes_info[4], notes_info[5], score_info[1],
-               event_info[0], event_info[1])
+               event_info[0], event_info[1], judge_card)
     sqln.append(sql)
 
     return sqln
@@ -547,7 +547,7 @@ def challenge_pair_init(uid, event_id, pair_id, update_time=None):
     return sql,
 
 
-def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_time=None):
+def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, judge_card=-1, update_time=None):
     if update_time is None:
         update_time = int(time.time())
     sqln = []
@@ -565,14 +565,14 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
     linf = chall_res['live_info'][0]
     lp = 0
     for mission in chall_res['mission_result']:
-        if mission['bonus_type'] == 3050:
+        if (mission['bonus_type'] == 3050) and mission['achieved']:
             lp += int(mission['bonus_param'])
     item_cost = [0, 15000, 5000, 12500, 12500, 25000, 50000, 0]
     try:
         sum_cost = sum([item_cost[x] for x in challenge_items])
     except:
         sum_cost = 0
-    challenge_items = json_dump(sum_cost)
+    challenge_items = json_dump(challenge_items)
     if finalized:
         sql = """
             update  `event_challenge_pairs` set `curr_round`='{}',finalized={},update_time='{}',round_setid_{}='{}',
@@ -599,7 +599,7 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
     sql2 = """
     INSERT INTO event_challenge (pair_id, round, update_time, uid, live_setting_id, live_difficulty_id, is_random, dangerous,
                              use_quad_point, score, perfect_cnt, great_cnt, good_cnt, bad_cnt, miss_cnt, max_combo, 
-                             love_cnt, no_judge_card, event_id, event_point, rank, combo_rank, mission_result, 
+                             love_cnt, judge_card, event_id, event_point, rank, combo_rank, mission_result, 
                              reward_rarity_list, bonus_list,event_challenge_item_ids) 
     VALUES ('{}','{}','{}','{}',{},'{}',{},{},
     {},'{}','{}','{}','{}','{}','{}','{}',
@@ -609,10 +609,10 @@ def challenge_proceed(s_proceed, s_check, pair_id, round_n, finalized, update_ti
         pair_id, round_n, update_time, s_check['user_id'], setid, linf['live_difficulty_id'], linf['is_random'],
         linf['dangerous'], linf['use_quad_point'], req['score_smile'] + req['score_cute'] + req['score_cool'],
         req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['miss_cnt'],
-        req['max_combo'], req['love_cnt'], 'NULL', req['event_id'], chall_res['reward_info']['event_point'],
+        req['max_combo'], req['love_cnt'], judge_card, req['event_id'], chall_res['reward_info']['event_point'],
         chall_res['rank'], chall_res['combo_rank'], escape_string(json.dumps(chall_res['mission_result'])),
         escape_string(json.dumps(chall_res['reward_info']['reward_rarity_list'])),
-        escape_string(json.dumps(chall_res['bonus_list'])), escape_string(challenge_items)
+        escape_string(json.dumps(chall_res['bonus_list'])), challenge_items
     )
     sqln.append(sql2)
     return sqln
@@ -626,10 +626,13 @@ def challenge_finalize(source, pair_id, update_time=None):
     rarity_l = [0, 0, 0, 0]
     ticket = 0
     exp = 0
+    coin = 0
     for r in res['reward_item_list']:
         rarity_l[r['rarity']] += 1
         if r['add_type'] == 1000 and r['item_id'] == 1:
             ticket += r['amount']
+        elif r['add_type'] == 3000:
+            coin += r['amount']
         elif r['add_type'] == 1001:
             try:
                 unit_id = r['unit_id']
@@ -647,11 +650,11 @@ def challenge_finalize(source, pair_id, update_time=None):
     sql = """
     UPDATE event_challenge_pairs SET finalized=1,player_exp='{}',game_coin='{}',event_point='{}',after_event_point='{}',
     total_event_point='{}',added_event_point='{}',reward_item_list='{}',update_time='{}',rarity_3_cnt={},rarity_2_cnt={}
-    ,rarity_1_cnt={},ticket_add={},skill_exp_add={} WHERE uid = '{}' AND pair_id='{}'
+    ,rarity_1_cnt={},ticket_add={},skill_exp_add={},coin_reward={} WHERE uid = '{}' AND pair_id='{}'
     """.format(res['base_reward_info']['player_exp'], res['base_reward_info']['game_coin'],
                eventp['added_event_point'], eventp['after_event_point'], eventp['after_total_event_point'],
                eventp['added_event_point'], escape_string(json.dumps(res['reward_item_list'])), update_time,
-               rarity_l[3], rarity_l[2], rarity_l[1], ticket, exp,
+               rarity_l[3], rarity_l[2], rarity_l[1], ticket, exp, coin,
                source['user_id'], pair_id
                )
     sql2 = """
@@ -675,7 +678,7 @@ def request_cache(source, stat=1, update_time=None):
     return sql,
 
 
-def festival_start(source, pair_id, update_time=None):
+def festival_start(source, pair_id, judge_card=-1, update_time=None):
     if update_time is None:
         update_time = int(time.time())
     s = source
@@ -709,11 +712,11 @@ def festival_start(source, pair_id, update_time=None):
     update_time=VALUES(update_time),last_song_set_ids=VALUES(last_song_set_ids)
     """.format(s['user_id'], req['event_id'], pair_id, update_time, json_dump(song_set_ids))
     sql2 = """INSERT INTO event_festival (uid, event_id, `status`, pair_id, song_diff_ids, song_set_ids, update_time, 
-    total_combo, event_festival_item_ids, guest_bonus,sub_guest_bonus,coin_cost) 
-    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}','{}','{}')
+    total_combo, event_festival_item_ids, guest_bonus,sub_guest_bonus,coin_cost,judge_card) 
+    VALUES ('{}','{}',0,'{}','{}','{}','{}','{}','{}','{}','{}','{}',{})
     """.format(s['user_id'], req['event_id'], pair_id, json_dump(song_diff_ids), json_dump(song_set_ids),
                update_time, total_combo, json_dump(req['event_festival_item_ids']), json_dump(guest_bonus),
-               json_dump(sub_guest_bonus), sum_cost)
+               json_dump(sub_guest_bonus), sum_cost, judge_card)
     return sql, sql2
 
 

@@ -14,7 +14,7 @@ import config as cfg
 from mysql import Mysql
 import requests as rq
 
-host = ['prod.game1.ll.sdo.com', 'mgame.sdo.com']
+host_white_list = ['prod.game1.ll.sdo.com', 'mgame.sdo.com', 'mygm.sdo.com', 'woa.sdo.com']
 nothandle = ['/webview.php', '/main.php/resources', '/main.php/eventscenario',
              '/main.php/personalnotice', '/main.php/tos', '/main.php/subscenario', '/main.php/secretbox/all']
 nothandle_api = ['rewardList', ]
@@ -27,8 +27,10 @@ my = Mysql(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME)
 
 class LLSIFmodifyRequestHandler(ProxyRequestHandler):
     def request_handler(self, req, req_body):
-
-        return None
+        netloc = urlparse.urlsplit(req.path).netloc
+        if netloc not in host_white_list:
+            return False
+        return
 
     def response_handler(self, req, req_body, res, res_body):
         if res.status == 502:
@@ -95,21 +97,6 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                     req_json = None
                 if req_json['package_type'] == 4:
                     return
-                    # if res_body:
-                    #     res_json_str = res_body.decode()
-                    #     res_json = json.loads(res_json_str, object_pairs_hook=OrderedDict)
-                    # else:
-                    #     return
-                    # if 13002 not in req_json['excluded_package_ids']:
-                    #     res_json['response_data'] += [
-                    #         {
-                    #             "size": 115630,
-                    #             "url": "http://cos.sokka.cn/patch/fix_13002.zip"
-                    #         }
-                    #     ]
-                    # res_plain = json.dumps(res_json).encode()
-                    # res.headers.replace_header('X-Message-Code', gen_xmessagecode(res_plain))
-                    # return res_plain
                 elif req_json['package_type'] == 1:
                     force_down = False
                     if res_body:

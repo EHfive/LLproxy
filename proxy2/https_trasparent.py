@@ -9,8 +9,8 @@ class ThreadingHTTPSServer(ThreadingHTTPServer):
     address_family = socket.AF_INET6
     daemon_threads = True
 
-    cakey = 'proxy2/ca.key'
-    cacert = 'proxy2/ca.crt'
+    cakey = '/home/cimoc/PycharmProjects/LLproxy/proxy2/ca.key'
+    cacert = '/home/cimoc/PycharmProjects/LLproxy/proxy2/ca.crt'
 
     def get_request(self):
         request, client_address = self.socket.accept()
