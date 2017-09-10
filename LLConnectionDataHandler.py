@@ -58,7 +58,11 @@ def get_deck_judge(uid, deckid):
             'deck',
             str(deckid)
         ])
-        code = r.get(k) or -1
+        code = r.get(k)
+        if code is None:
+            code = -1
+        else:
+            code = int(code)
     except:
         code = -1
     print(code)
@@ -178,10 +182,11 @@ class DataHandler:
         elif m[0] in ('live', 'rlive'):
             if m[1] == 'reward' and '/reward' in self.s['path']:
                 try:
-                    deckid = r.get(','.join([
+                    deckid = int(r.get(','.join([
                         str(self.id),
                         'deck'
-                    ]))
+                    ])))
+                    print(deckid)
                 except:
                     deckid = None
                 jugde_card = get_deck_judge(self.id, deckid) if deckid else -1
@@ -195,6 +200,7 @@ class DataHandler:
                         str(self.id),
                         'deck'
                     ]), self.req_data['unit_deck_id'])
+                    print(self.req_data['unit_deck_id'])
                 except:
                     pass
                 for rank_info, live_info in zip(self.res_data['rank_info'], self.res_data['live_info']):
