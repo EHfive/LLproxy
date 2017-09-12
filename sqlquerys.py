@@ -195,19 +195,20 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
         if 'user_info' in u:
             user_id = u['user_info']['user_id']
             playes.append(str(user_id))
-            if user_id == uid:
+            if int(user_id) == int(uid):
                 total_event_point = u['event_status']['total_event_point']
                 event_rank = u['event_status']['event_rank']
                 unit_id = u['center_unit_info']['unit_id']
                 display_rank = u['center_unit_info']['display_rank']
                 setting_award_id = u['setting_award_id']
-    setting_id = get_setting_id(res['live_info'][0]['live_difficulty_id'])
+
     if 'live_info' in res:
+        setting_id = get_setting_id(res['live_info'][0]['live_difficulty_id'])
         sql1 = """
         INSERT INTO `llproxy`.`score_match` (`uid`, `status`, `event_id`, `event_battle_room_id`, `event_rank`, `total_event_point`, `added_event_point`, `unit_id`, `display_rank`,
          `setting_award_id`, `live_difficulty_id`, `live_setting_id`,`use_quad_point`, `is_random`, `dangerous`,`update_time`,`judge_card`)
     VALUES ('{}', '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}', '{}', {},{}, {}, {},{},{});
-        """.format(event_id, uid, 0, event_id, room_id, event_rank, total_event_point, 0, unit_id, display_rank,
+        """.format(uid, 0, event_id, room_id, event_rank, total_event_point, 0, unit_id, display_rank,
                    setting_award_id, res['live_info'][0]['live_difficulty_id'], setting_id,
                    res['live_info'][0]['use_quad_point'],
                    res['live_info'][0]['is_random'], res['live_info'][0]['dangerous'], update_time, -1)
@@ -217,7 +218,7 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
         REPLACE INTO `llproxy`.`score_match_rooms` (`event_id`, `update_time`, `event_battle_room_id`, `status`, `players`, `matching_user`, `live_difficulty_id`, `live_setting_id`,
         `use_quad_point`, `is_random`, `dangerous`)
          VALUES ('{}', '{}', '{}', '0', '{}', '{}', '{}',{}, {}, {}, {});
-        """.format(event_id, event_id, update_time, room_id, ','.join(playes),
+        """.format(event_id, update_time, room_id, ','.join(playes),
                    escape_string(json.dumps(res['matching_user'], separators=(',', ':'), ensure_ascii=False)),
                    res['live_info'][
                                       0]['live_difficulty_id'], setting_id, res['live_info'][0]['use_quad_point'],
@@ -225,10 +226,11 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
         sql.append(sql2)
     else:
         sql2 = """
-                UPDATE `llproxy`.`score_match_rooms` SET `event_id`='{}', `update_time`='{}', `status`='0',`players`='{}',  `matching_user`='{}' WHERE  event_battle_room_id ='{}'
-                """.format(event_id, event_id, update_time, ','.join(playes),
+                UPDATE `llproxy`.`score_match_rooms` SET  `update_time`='{}', `status`='0',`players`='{}', 
+                `matching_user`='{}' WHERE  event_battle_room_id ='{}' AND event_id={}
+                """.format(update_time, ','.join(playes),
                            escape_string(json.dumps(res['matching_user'], separators=(',', ':'), ensure_ascii=False)),
-                           room_id)
+                           room_id, event_id)
         sql.append(sql2)
     return sql
 
@@ -236,10 +238,10 @@ def score_match_status_0(uid, event_id, room_id, res, update_time=None):
 def score_match_status_1(uid, event_id, room_id, req, judge_card=-1, update_time=None):
     if update_time is None:
         update_time = int(time.time())
-    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '1',`update_time`={},`judge_card`={} WHERE uid = {} AND event_battle_room_id ={};".format(
-        event_id, update_time, judge_card, uid, room_id)
-    sql2 = "UPDATE `llproxy`.`score_match_rooms` SET `status` = '1',`update_time`={} WHERE  event_battle_room_id ={};".format(
-        event_id, update_time, room_id)
+    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '1',`update_time`={},`judge_card`={} WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
+        update_time, judge_card, uid, room_id, event_id)
+    sql2 = "UPDATE `llproxy`.`score_match_rooms` SET `status` = '1',`update_time`={} WHERE  event_battle_room_id ={} AND event_id={};".format(
+        update_time, room_id, event_id)
     return sql1, sql2
 
 
@@ -260,12 +262,12 @@ def pub_live_info(live_difficulty_id, merge_live_info, update_time=None):
 def score_match_status_2(uid, event_id, room_id, req, update_time=None):
     if update_time is None:
         update_time = int(time.time())
-    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '2',`perfect_cnt` = '{}', `great_cnt` = '{}', `good_cnt` = '{}', `bad_cnt` = '{}', `love_cnt` = '{}', `miss_cnt` = '{}',`max_combo` = '{}',`score`= '{}',`update_time`={} WHERE uid = {} AND event_battle_room_id ={};".format(
-        event_id, req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['love_cnt'],
+    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '2',`perfect_cnt` = '{}', `great_cnt` = '{}', `good_cnt` = '{}', `bad_cnt` = '{}', `love_cnt` = '{}', `miss_cnt` = '{}',`max_combo` = '{}',`score`= '{}',`update_time`={} WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
+        req['perfect_cnt'], req['great_cnt'], req['good_cnt'], req['bad_cnt'], req['love_cnt'],
         req['miss_cnt'], req['max_combo'], req['score_smile'] + req['score_cute'] + req['score_cool'],
-        update_time, uid, room_id)
-    sql2 = "UPDATE `llproxy`.`score_match_rooms` SET `status` = '2',`update_time`={} WHERE  event_battle_room_id ={};".format(
-        event_id, update_time, room_id)
+        update_time, uid, room_id, event_id)
+    sql2 = "UPDATE `llproxy`.`score_match_rooms` SET `status` = '2',`update_time`={} WHERE  event_battle_room_id ={} AND event_id={};".format(
+        update_time, room_id, event_id)
     return sql1, sql2
 
 
@@ -273,14 +275,15 @@ def score_match_status_3(uid, event_id, room_id, res, update_time=None):
     if update_time is None:
         update_time = int(time.time())
     point_info = res['event_info']['event_point_info']
-    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '3',`total_event_point` = '{}', `added_event_point` = '{}',`update_time`={}  WHERE uid = {} AND event_battle_room_id ={};".format(
-        event_id, point_info['after_total_event_point'], point_info['added_event_point'], update_time, uid,
-        room_id)
+    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '3',`total_event_point` = '{}', `added_event_point` = '{}',`update_time`={}  WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
+        point_info['after_total_event_point'], point_info['added_event_point'], update_time, uid,
+        room_id, event_id)
 
     sql2 = """
-        UPDATE `llproxy`.`score_match_rooms` SET `event_id`='{}', `update_time`='{}', `status`='3',  `matching_user`='{}' WHERE  event_battle_room_id ={}
-        """.format(event_id, event_id, update_time,
-                   escape_string(json.dumps(res['matching_user'], separators=(',', ':'), ensure_ascii=False)), room_id)
+        UPDATE `llproxy`.`score_match_rooms` SET `update_time`='{}', `status`='3',  `matching_user`='{}' WHERE  event_battle_room_id ={} AND event_id={}
+        """.format(update_time,
+                   escape_string(json.dumps(res['matching_user'], separators=(',', ':'), ensure_ascii=False)), room_id,
+                   event_id)
 
     return sql1, sql2
 
@@ -772,7 +775,7 @@ def festival_reward(source, pair_id, score, update_time=None):
                score_curr, req['love_cnt'],
                pt_ifo['after_total_event_point'], pt_ifo['added_event_point'], res['rank'], res['combo_rank'],
                rarity_cnt[3], rarity_cnt[2], rarity_cnt[1], ticket_add, json_dump(reward_items), update_time,
-               json_dump(req['sub_bonus_flag']), exp,coin, s['user_id'], req['event_id'], pair_id)
+               json_dump(req['sub_bonus_flag']), exp, coin, s['user_id'], req['event_id'], pair_id)
     return sql, sql2
 
 

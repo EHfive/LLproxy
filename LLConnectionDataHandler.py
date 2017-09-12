@@ -370,14 +370,15 @@ class DataHandler:
 def score_match_thread(u_id):
     info = battle_dict[u_id]['queue'].get()
     final_room_info = {}
+    room_id = 0
+    event_id = 0
     while info is not None:
         act = info['action']
         req = info['req_data']
         res = info['res_data']
         players = []
         playtag = 0
-        room_id = 0
-        event_id = 0
+
         if act == 'startWait':
             final_room_info = info
             playtag = 1
@@ -405,7 +406,9 @@ def score_match_thread(u_id):
         elif act == 'liveEnd':
             put_sqls(sq.score_match_status_2(u_id, event_id, room_id, req))
         elif act == 'endRoom':
+            put_sqls(sq.effort_point_box(u_id, res['effort_point']))
             put_sqls(sq.score_match_status_3(u_id, event_id, room_id, res))
+
             print('live end', end='\n\n')
             return
         if playtag == 1:
@@ -439,6 +442,7 @@ def datainserter():
     my = Mysql(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME)
     while True:
         sqlq = database_q.get()
+        # print(sqlq)
         try:
             my.query(sqlq)
         except Exception as e:
