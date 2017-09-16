@@ -401,15 +401,17 @@ def score_match_thread(u_id):
                 'notes_speed': live_info['notes_speed'],
                 'notes_list_len': len(live_info['notes_list']),
             }
-            print('liveStart')
-            print(json.dumps(liveinfo, indent=4), end='\n\n')
+            # print('liveStart')
+            # print(json.dumps(liveinfo, indent=4), end='\n\n')
         elif act == 'liveEnd':
             put_sqls(sq.score_match_status_2(u_id, event_id, room_id, req))
         elif act == 'endRoom':
-            put_sqls(sq.effort_point_box(u_id, res['effort_point']))
-            put_sqls(sq.score_match_status_3(u_id, event_id, room_id, res))
 
-            print('live end', end='\n\n')
+            put_sqls(sq.score_match_status_3(u_id, event_id, room_id, res))
+            put_sqls(sq.effort_point_box(u_id, res['effort_point']))
+            put_sqls(sq.user_info(res['after_user_info'], u_id))
+
+            # print('live end', end='\n\n')
             return
         if playtag == 1:
             players_n = []
@@ -432,8 +434,9 @@ def score_match_thread(u_id):
                 players_n.append(i)
             if len(players_n) != len(players):
                 players = players_n
-                for x in players:
-                    print(x)
+                if act != 'startWait':
+                    for x in players:
+                        print(x)
 
         info = battle_dict[u_id]['queue'].get()
 

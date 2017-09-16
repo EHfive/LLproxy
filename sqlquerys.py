@@ -274,9 +274,18 @@ def score_match_status_2(uid, event_id, room_id, req, update_time=None):
 def score_match_status_3(uid, event_id, room_id, res, update_time=None):
     if update_time is None:
         update_time = int(time.time())
+    battle_rank = 0
+    event_rank = 0
+    for u in res['matching_user']:
+        if 'user_info' in u:
+            user_id = u['user_info']['user_id']
+            if int(user_id) == int(uid):
+                battle_rank = u['result']['battle_rank']
+                event_rank = u['event_status']['event_rank']
     point_info = res['event_info']['event_point_info']
-    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '3',`total_event_point` = '{}', `added_event_point` = '{}',`update_time`={}  WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
-        point_info['after_total_event_point'], point_info['added_event_point'], update_time, uid,
+    sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '3',`total_event_point` = '{}', `added_event_point` = '{}',`update_time`={},battle_rank='{}',event_rank='{}'  WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
+        point_info['after_total_event_point'], point_info['added_event_point'], update_time,
+        battle_rank, event_rank,uid,
         room_id, event_id)
 
     sql2 = """
@@ -433,7 +442,7 @@ def secretbox(source, update_time=None):
     `result_unit_ids`, `result_rarity_ids`,`n_cnt`, `r_cnt`, `sr_cnt`, `ssr_cnt`, `ur_cnt`, `is_support_member`, `multi_count`) 
     VALUES ('{}', '{}', '{}', '{}', '{}', {}, 
     '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}','{}')
-    """.format(uid, update_time, res['secret_box_page_id'], boxifo['secret_box_id'], boxifo['name'],
+    """.format(uid, update_time, res['secret_box_page_id'], boxifo['secret_box_id'], escape_string(boxifo['name']),
                boxifo['cost']['item_id'],
                ','.join(unit_ids), ','.join(rarity_ids), cnt[1], cnt[2], cnt[3], cnt[5], cnt[4], is_support_member,
                count)
