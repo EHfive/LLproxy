@@ -4,6 +4,10 @@ import hashlib
 import sqlite3
 from urllib import parse
 from pymysql import escape_string
+import sys, os
+
+spath = sys.path[0]
+os.chdir(spath)
 
 
 def game_db_init():
@@ -254,7 +258,7 @@ def pub_live_info(live_difficulty_id, merge_live_info, update_time=None):
     REPLACE INTO `llproxy`.`pub_live_info` (`live_difficulty_id`, `live_setting_id`,`update_time`, `is_random`, `dangerous`, `notes_speed`,  `merge_info_json`)
      VALUES ('{}',{}, '{}', {}, {}, {}, '{}')
     """.format(live_difficulty_id, setting_id, update_time, merge_live_info['live_info']['is_random'],
-               merge_live_info['live_info']['dangerous'], merge_live_info['live_info']['notes_speed'],
+               'NULL', merge_live_info['live_info']['notes_speed'],
                json_str)
     return sql,
 
@@ -285,7 +289,7 @@ def score_match_status_3(uid, event_id, room_id, res, update_time=None):
     point_info = res['event_info']['event_point_info']
     sql1 = "UPDATE `llproxy`.`score_match` SET `status` = '3',`total_event_point` = '{}', `added_event_point` = '{}',`update_time`={},battle_rank='{}',event_rank='{}'  WHERE uid = {} AND event_battle_room_id ={} AND event_id={};".format(
         point_info['after_total_event_point'], point_info['added_event_point'], update_time,
-        battle_rank, event_rank,uid,
+        battle_rank, event_rank, uid,
         room_id, event_id)
 
     sql2 = """
@@ -434,8 +438,8 @@ def secretbox(source, update_time=None):
         rarity_ids.append(str(unit['unit_rarity_id']))
         if unit['is_support_member']:
             is_support_member = 1
-    if ('item_id' not in boxifo['cost']) or (boxifo['cost']['item_id'] is None):
-        boxifo['cost']['item_id'] = 'NULL'
+    # if ('item_id' not in boxifo['cost']) or (boxifo['cost']['item_id'] is None):
+    #     boxifo['cost']['item_id'] = 'NULL'
 
     sql = """
     INSERT INTO `llproxy`.`secretbox` (`uid`, `update_time`, `secret_box_page_id`, `secret_box_id`, `name`, `cost_item_id`, 
@@ -443,7 +447,7 @@ def secretbox(source, update_time=None):
     VALUES ('{}', '{}', '{}', '{}', '{}', {}, 
     '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}','{}')
     """.format(uid, update_time, res['secret_box_page_id'], boxifo['secret_box_id'], escape_string(boxifo['name']),
-               boxifo['cost']['item_id'],
+               'NULL',
                ','.join(unit_ids), ','.join(rarity_ids), cnt[1], cnt[2], cnt[3], cnt[5], cnt[4], is_support_member,
                count)
 

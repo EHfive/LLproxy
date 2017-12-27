@@ -112,7 +112,14 @@ class DataHandler:
                 except KeyError:
                     print("challenge proceed 无 after_user_info")
         elif m[0] == 'challenge':
-            if m[1] == 'checkpoint':
+            if m[1] == 'proceed':
+                battle_dict[self.id] = self.s
+                print("battle_dict length", len(battle_dict))
+                try:
+                    put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
+                except KeyError:
+                    print("challenge proceed 无 after_user_info")
+            elif m[1] == 'checkpoint':
                 if self.id in battle_dict:
                     s_proceed = battle_dict[self.id]
                     jugde_card = get_deck_judge(self.id, s_proceed['req_data']['unit_deck_id'])
@@ -169,7 +176,7 @@ class DataHandler:
 
                 put_sqls(sq.challenge_proceed(s_proceed, self.s, pair_id, round_n, final, jugde_card))
                 put_sqls(sq.effort_point_box(self.id, self.res_data['effort_point']))
-            elif m[1] == 'finalize':
+            elif m[1] in ('finalize', 'gameover'):
                 put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
                 db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
                 cur = db.cursor(cursor=pymysql.cursors.DictCursor)
@@ -201,7 +208,8 @@ class DataHandler:
                     ]), self.req_data['unit_deck_id'])
                 except:
                     pass
-                for rank_info, live_info in zip(self.res_data['rank_info'], self.res_data['live_info']):
+                for rank_info, live_info in zip(self.res_data['rank_info'], self.res_data['live_list']):
+                    live_info = live_info['live_info']
                     live_id = live_info['live_difficulty_id']
                     if live_id not in live_maps:
                         merge_info = {

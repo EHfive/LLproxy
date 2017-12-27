@@ -8,22 +8,26 @@ from pymysql.cursors import DictCursor
 import sqlquerys as sq
 import threading
 import queue
+import os, sys
 
 database_q = queue.Queue()
+spath = sys.path[0]
+os.chdir(spath)
+print(os.getcwd())
 
 
 def game_db_init():
     global live_setting_id, unit_db
-    unit_db = sqlite3.connect("./db/unit/unit.db_", check_same_thread=False)
-    battle = sqlite3.connect("./db/event/battle.db_").execute(
+    unit_db = sqlite3.connect(os.path.join(spath, "./db/unit/unit.db_"), check_same_thread=False)
+    battle = sqlite3.connect(os.path.join(spath,"./db/event/battle.db_")).execute(
         "SELECT live_difficulty_id,live_setting_id FROM event_battle_live_m").fetchall()
-    festival = sqlite3.connect("./db/event/festival.db_").execute(
+    festival = sqlite3.connect(os.path.join(spath,"./db/event/festival.db_")).execute(
         "SELECT live_difficulty_id,live_setting_id FROM event_festival_live_m").fetchall()
-    marathon = sqlite3.connect("./db/event/marathon.db_").execute(
+    marathon = sqlite3.connect(os.path.join(spath,"./db/event/marathon.db_")).execute(
         "SELECT live_difficulty_id,live_setting_id FROM event_marathon_live_m").fetchall()
-    challenge = sqlite3.connect("./db/challenge/challenge.db_").execute(
+    challenge = sqlite3.connect(os.path.join(spath,"./db/challenge/challenge.db_")).execute(
         "SELECT live_difficulty_id,live_setting_id FROM event_challenge_live_m").fetchall()
-    live_db = sqlite3.connect("./db/live/live.db_")
+    live_db = sqlite3.connect(os.path.join(spath,"./db/live/live.db_"))
     live_setting_normal = live_db.execute("SELECT live_difficulty_id,live_setting_id FROM normal_live_m").fetchall()
     live_setting_special = live_db.execute("SELECT live_difficulty_id,live_setting_id FROM special_live_m").fetchall()
     ress = []
@@ -50,7 +54,7 @@ def get_setting_id(live_difficulty_id):
 def setting_tran():
     db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
     cur = db.cursor()
-    dbs = ['live', 'pub_live_info', 'event_traditional']
+    dbs = ['live', 'pub_live_info', 'event_traditional','event_challenge']
     for dbname in dbs:
         sql = "SELECT `id`,`live_difficulty_id` from `{}` where `live_setting_id` is NULL".format(dbname)
         cur.execute(sql)
@@ -316,14 +320,17 @@ if __name__ == "__main__":
     #     {"last_id": lastid},
     #     open("last_lp_tran_id.json", 'w')
     # )
-    try:
-        pre_id = json.load(open("last_lp_tran_id.json"))['last_reward_tran_id']
-    except:
-        pre_id = 0
-    print("lp tran start at", pre_id)
-    lastid = challenge_reward_tran(80, pre_id)
-    print("Last id", lastid)
-    json.dump(
-        {"last_reward_tran_id": lastid},
-        open("last_lp_tran_id.json", 'w')
-    )
+    # try:
+    #     pre_id = json.load(open("last_lp_tran_id.json"))['last_reward_tran_id']
+    # except:
+    #     pre_id = 0
+    # print("lp tran start at", pre_id)
+    # lastid = challenge_reward_tran(80, pre_id)
+    # print("Last id", lastid)
+    # json.dump(
+    #     {"last_reward_tran_id": lastid},
+    #     open("last_lp_tran_id.json", 'w')
+
+    # )
+
+    setting_tran()
