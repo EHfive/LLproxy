@@ -220,7 +220,9 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
             if res_body:
 
                 # res_json_str = re.search(r'{.*}', res_body.decode()).group()
-                res_json_str = res_body.decode()
+
+                res_json_str = utf8decode(res_body)
+
                 res_json = json.loads(res_json_str)["response_data"]
             else:
                 res_json = None
@@ -284,6 +286,15 @@ class LLSIFmodifyRequestHandler(ProxyRequestHandler):
                 print(e)
 
         return
+
+
+def utf8decode(s):
+    for encoding in "utf-8-sig", "utf-8":
+        try:
+            return s.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return s.decode("latin-1")
 
 
 def test(HandlerClass=ProxyRequestHandler, ServerClass=ThreadingHTTPServer, protocol="HTTP/1.1"):

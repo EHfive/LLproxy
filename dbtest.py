@@ -4,7 +4,7 @@ import hashlib
 import sqlite3
 import config as cfg
 import pymysql
-from pymysql.cursors import DictCursor
+from pymysql.cursors import SSDictCursor
 import sqlquerys as sq
 import threading
 import queue
@@ -194,7 +194,7 @@ def festival_record_tran():
     cur.execute(
         "SELECT uid,curr_pair_id FROM `event_festival_users` ")
     pair_id_by_u = dict(cur.fetchall())
-    cur = db.cursor(DictCursor)
+    cur = db.cursor(SSDictCursor)
     cur.execute(
         "SELECT * FROM `request_cache` WHERE (`m1` LIKE 'liveStart' OR `m1` LIKE 'liveReward') AND `status`=2 AND uid =865384 ORDER BY id ASC ")
     # put_sqls(["TRUNCATE event_festival", "TRUNCATE event_festival_users"])
@@ -238,6 +238,42 @@ def festival_record_tran():
 
         print(result['id'], result['uid'], pair_id, result['m1'])
         put_sqls(("UPDATE request_cache SET `status`=0 WHERE id = '{}'".format(result['id']),))
+
+def quest_record_tran():
+    db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
+    cur = db.cursor(SSDictCursor)
+    cur.execute(
+        "SELECT * FROM `request_cache` WHERE `m1` IN ('questStart','questReward')\
+ AND `status`=1  ORDER BY id ASC")
+    # put_sqls(["TRUNCATE event_quest"])
+    battle_dict = {}
+    for result in cur:
+        m = result['m0'],result['m1']
+        uid = result['uid']
+        req = json.loads(result['request'])
+        res = json.loads(result['response'])
+        s = {
+            "user_id": result['uid'],
+            "req_data": req,
+            "res_data": res
+        }
+        put_sqls(("UPDATE request_cache SET `status`=0 WHERE id = '{}'".format(result['id']),))
+
+        if m[1] == 'questStart':
+            battle_dict[uid] = s
+            print("battle_dict length", len(battle_dict))
+
+        elif m[1] == 'questReward':
+            if res and ('live_result' in res):
+                put_sqls(sq.effort_point_box(uid, res['live_result']['effort_point'],update_time=result['req_time']))
+            if uid in battle_dict:
+                s_start = battle_dict.pop(uid)
+                try:
+                    put_sqls(sq.quest(s_start, s, update_time=result['req_time']))
+                except:
+                    continue
+
+        print(result['req_time'],result['id'], result['uid'], result['m1'])
 
 
 def festival_exp_tran():
@@ -305,6 +341,7 @@ def put_sqls(sqls):
     for x in sqls:
         cur_o.execute(x)
         db_o.commit()
+        # print(x)
 
 
 # festival_exp_tran()
@@ -333,4 +370,5 @@ if __name__ == "__main__":
 
     # )
 
-    setting_tran()
+    # setting_tran()
+    quest_record_tran()

@@ -1,0 +1,445 @@
+[
+  {
+    "event_quest_pin_id": 7,
+    "timeStamp": 1514358226,
+    "action": "questReward",
+    "seed": "1218412041",
+    "last_hp": 44,
+    "score_smile": 69825,
+    "event_id": 95,
+    "key": "E451CBEF664E60B147A0C4B26228822B5666786B",
+    "bad_cnt": 0,
+    "skill_count": 114,
+    "score_cute": 117980,
+    "perfect_cnt": 488,
+    "miss_cnt": 0,
+    "good_cnt": 0,
+    "love_cnt": 158,
+    "great_cnt": 96,
+    "max_combo": 584,
+    "mgd": 1,
+    "module": "quest",
+    "commandNum": "801443031.1514358226.15",
+    "score_cool": 829969
+  },
+  {
+    "event_info": {
+      "live_next_event_reward_info": {
+        "rewards": [
+          {
+            "item_category_id": 3,
+            "item_id": 3,
+            "add_type": 3000,
+            "amount": 6000
+          }
+        ],
+        "event_point": 750
+      },
+      "live_event_point_info": {
+        "before_total_event_point": 200,
+        "added_event_point": 445,
+        "after_total_event_point": 645,
+        "base_event_point": 343,
+        "before_event_point": 200,
+        "after_event_point": 645
+      },
+      "event_notice": [],
+      "event_id": 95,
+      "live_event_reward_info": [
+        {
+          "reward_box_flag": false,
+          "required_event_point": 250,
+          "item_id": 2,
+          "add_type": 3002,
+          "amount": 100,
+          "item_category_id": 0
+        },
+        {
+          "reward_box_flag": false,
+          "required_event_point": 500,
+          "item_id": 4,
+          "add_type": 3001,
+          "amount": 1,
+          "item_category_id": 0
+        }
+      ]
+    },
+    "live_result": {
+      "next_level_info": [
+        {
+          "level": 293,
+          "from_exp": 1261384
+        }
+      ],
+      "after_user_info": {
+        "exp": 1261467,
+        "tutorial_state": -1,
+        "level": 293,
+        "friend_max": 44,
+        "next_exp": 1267404,
+        "sns_coin": 33,
+        "game_coin": 42876688,
+        "energy_full_time": "2017-12-27 17:31:33",
+        "unlock_random_live_aqours": 1,
+        "unit_max": 448,
+        "energy_max": 171,
+        "previous_exp": 1257861,
+        "over_max_energy": 0,
+        "social_point": 29905,
+        "unlock_random_live_muse": 1
+      },
+      "unlocked_subscenario_ids": [],
+      "free_mission_result": [
+        {
+          "param": "5",
+          "achieved": false,
+          "event_quest_free_mission_id": 16,
+          "type": 6000,
+          "achieved_new": false
+        },
+        {
+          "param": "10",
+          "achieved": false,
+          "event_quest_free_mission_id": 17,
+          "type": 6000,
+          "achieved_new": false
+        },
+        {
+          "param": "25",
+          "achieved": false,
+          "event_quest_free_mission_id": 18,
+          "type": 6000,
+          "achieved_new": false
+        }
+      ],
+      "can_send_friend_request": false,
+      "bonus_list": [
+        {
+          "bonus_param": "1.2",
+          "bonus_from": 530,
+          "bonus_type": 3030
+        },
+        {
+          "bonus_param": "1.08",
+          "bonus_from": 540,
+          "bonus_type": 3030
+        }
+      ],
+      "rank": 1,
+      "is_high_score": true,
+      "reward_unit_list": {
+        "live_clear": [
+          {
+            "reward_box_flag": false,
+            "exp": 0,
+            "is_love_max": false,
+            "unit_id": 251,
+            "love": 0,
+            "amount": 1,
+            "level": 1,
+            "unit_skill_exp": 0,
+            "skill_level": 1,
+            "next_exp": 6,
+            "is_support_member": false,
+            "is_level_max": false,
+            "is_rank_max": false,
+            "max_hp": 1,
+            "rank": 1,
+            "add_type": 1001,
+            "unit_removable_skill_capacity": 0,
+            "display_rank": 1,
+            "item_category_id": 0,
+            "unit_owning_user_id": 2738111463,
+            "new_unit_flag": false
+          }
+        ],
+        "live_rank": [
+          {
+            "reward_box_flag": false,
+            "exp": 669,
+            "is_love_max": false,
+            "unit_id": 223,
+            "love": 0,
+            "amount": 1,
+            "level": 12,
+            "unit_skill_exp": 0,
+            "skill_level": 1,
+            "next_exp": 793,
+            "is_support_member": false,
+            "is_level_max": false,
+            "is_rank_max": false,
+            "max_hp": 1,
+            "rank": 1,
+            "add_type": 1001,
+            "unit_removable_skill_capacity": 0,
+            "display_rank": 1,
+            "item_category_id": 0,
+            "unit_owning_user_id": 2738111465,
+            "new_unit_flag": false
+          }
+        ],
+        "live_combo": [
+          {
+            "reward_box_flag": false,
+            "exp": 0,
+            "is_love_max": false,
+            "unit_id": 393,
+            "love": 0,
+            "amount": 1,
+            "level": 1,
+            "unit_skill_exp": 0,
+            "skill_level": 1,
+            "next_exp": 6,
+            "is_support_member": false,
+            "is_level_max": false,
+            "is_rank_max": false,
+            "max_hp": 2,
+            "rank": 1,
+            "add_type": 1001,
+            "unit_removable_skill_capacity": 0,
+            "display_rank": 1,
+            "item_category_id": 0,
+            "unit_owning_user_id": 2738111464,
+            "new_unit_flag": false
+          }
+        ]
+      },
+      "unit_list": [
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 677,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 1,
+          "unit_owning_user_id": 2375377028,
+          "unit_skill_level": 5,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 222,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 2,
+          "unit_owning_user_id": 2514197112,
+          "unit_skill_level": 3,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 183,
+          "love": 500,
+          "max_love": 500,
+          "before_love": 500,
+          "level": 80,
+          "position": 3,
+          "unit_owning_user_id": 512076765,
+          "unit_skill_level": 8,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 826,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 4,
+          "unit_owning_user_id": 2584353974,
+          "unit_skill_level": 6,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 873,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 5,
+          "unit_owning_user_id": 2474391364,
+          "unit_skill_level": 5,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 574,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 6,
+          "unit_owning_user_id": 2375292537,
+          "unit_skill_level": 1,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 156,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 7,
+          "unit_owning_user_id": 2015644257,
+          "unit_skill_level": 3,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 298,
+          "love": 1000,
+          "max_love": 1000,
+          "before_love": 1000,
+          "level": 100,
+          "position": 8,
+          "unit_owning_user_id": 1144497819,
+          "unit_skill_level": 3,
+          "is_level_max": true
+        },
+        {
+          "is_rank_max": true,
+          "is_love_max": true,
+          "unit_id": 111,
+          "love": 500,
+          "max_love": 500,
+          "before_love": 500,
+          "level": 80,
+          "position": 9,
+          "unit_owning_user_id": 206735027,
+          "unit_skill_level": 8,
+          "is_level_max": true
+        }
+      ],
+      "total_love": 158,
+      "combo_rank": 1,
+      "live_info": [
+        {
+          "live_difficulty_id": 500048,
+          "use_quad_point": false,
+          "is_random": false,
+          "dangerous": false
+        }
+      ],
+      "free_mission_reward_info": [],
+      "hi_score": 1017774,
+      "effort_point": [
+        {
+          "capacity": 4000000,
+          "before": 3675184,
+          "rewards": [
+            {
+              "reward_box_flag": false,
+              "item_id": 3,
+              "add_type": 5500,
+              "insert_date": "2017-02-21 10:30:45",
+              "amount": 1,
+              "item_category_id": 0,
+              "rarity": 1
+            },
+            {
+              "reward_box_flag": false,
+              "item_id": 3,
+              "add_type": 5500,
+              "insert_date": "2017-02-21 10:30:45",
+              "amount": 1,
+              "item_category_id": 0,
+              "rarity": 1
+            },
+            {
+              "reward_box_flag": false,
+              "item_id": 2,
+              "add_type": 3006,
+              "amount": 1,
+              "item_category_id": 0,
+              "rarity": 5
+            }
+          ],
+          "live_effort_point_box_spec_id": 5,
+          "after": 4000000
+        },
+        {
+          "capacity": 4000000,
+          "before": 0,
+          "rewards": [],
+          "live_effort_point_box_spec_id": 5,
+          "after": 692958
+        }
+      ],
+      "limited_effort_box": [],
+      "daily_reward_info": [
+        {
+          "reward_box_flag": false,
+          "item_category_id": 0,
+          "item_id": 4,
+          "add_type": 3001,
+          "amount": 1
+        },
+        {
+          "reward_box_flag": false,
+          "item_category_id": 0,
+          "item_id": 3,
+          "add_type": 3000,
+          "amount": 10000
+        },
+        {
+          "reward_box_flag": false,
+          "item_category_id": 0,
+          "item_id": 2,
+          "add_type": 3002,
+          "amount": 200
+        }
+      ],
+      "before_user_info": {
+        "exp": 1261384,
+        "tutorial_state": -1,
+        "level": 293,
+        "friend_max": 44,
+        "next_exp": 1267404,
+        "sns_coin": 31,
+        "game_coin": 42862188,
+        "energy_full_time": "2017-12-27 17:31:33",
+        "unlock_random_live_aqours": 1,
+        "unit_max": 448,
+        "energy_max": 171,
+        "previous_exp": 1257861,
+        "over_max_energy": 0,
+        "social_point": 29595,
+        "unlock_random_live_muse": 1
+      },
+      "base_reward_info": {
+        "player_exp": 83,
+        "social_point": 10,
+        "player_exp_unit_max": {
+          "before": 448,
+          "after": 448
+        },
+        "player_exp_lp_max": {
+          "before": 171,
+          "after": 171
+        },
+        "player_exp_friend_max": {
+          "before": 44,
+          "after": 44
+        },
+        "game_coin": 4500,
+        "game_coin_reward_box_flag": false
+      }
+    },
+    "unlocked_pin_ids": [
+      3
+    ]
+  }
+]

@@ -223,6 +223,25 @@ class DataHandler:
             if m[1] == 'recoveryEnergy':
                 put_sqls(sq.recovery(self.s))
 
+        elif m[0] == 'quest':
+            if m[1] == 'questStart':
+                battle_dict[self.id] = self.s
+                print("battle_dict length", len(battle_dict))
+                try:
+                    put_sqls(sq.user_info(self.res_data['after_user_info'], self.id))
+                except KeyError:
+                    print("quest start 无 after_user_info")
+
+            elif m[1] == 'questReward':
+                if self.id in battle_dict:
+                    s_start = battle_dict[self.id]
+                    jugde_card = get_deck_judge(self.id, s_start['req_data']['unit_deck_id'])
+                    put_sqls(sq.quest(s_start, self.s, jugde_card))
+                    battle_dict.pop(self.id)
+                if 'live_result' in self.res_data:
+                    put_sqls(sq.user_info(self.res_data['live_result']['after_user_info'], self.id))
+                    put_sqls(sq.effort_point_box(self.id, self.res_data['live_result']['effort_point']))
+
         elif m[0] == 'festival':
             db = pymysql.connect(cfg.DB_HOST, cfg.DB_USER, cfg.DB_PASSWORD, cfg.DB_NAME, charset=cfg.DB_CHARSET)
             cur = db.cursor(cursor=pymysql.cursors.DictCursor)

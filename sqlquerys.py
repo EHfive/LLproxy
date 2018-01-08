@@ -21,6 +21,8 @@ def game_db_init():
         "SELECT live_difficulty_id,live_setting_id FROM event_marathon_live_m").fetchall()
     challenge = sqlite3.connect("./db/challenge/challenge.db_").execute(
         "SELECT live_difficulty_id,live_setting_id FROM event_challenge_live_m").fetchall()
+    quest = sqlite3.connect("./db/quest/quest.db_").execute(
+        "SELECT live_difficulty_id,live_setting_id FROM event_quest_live_m").fetchall()
     live_db = sqlite3.connect("./db/live/live.db_")
     live_setting_normal = live_db.execute("SELECT live_difficulty_id,live_setting_id FROM normal_live_m").fetchall()
     live_setting_special = live_db.execute("SELECT live_difficulty_id,live_setting_id FROM special_live_m").fetchall()
@@ -31,12 +33,11 @@ def game_db_init():
     ress.extend(battle)
     ress.extend(festival)
     ress.extend(challenge)
+    ress.extend(quest)
     live_setting_id = dict(ress)
 
 
-def get_setting_id(live_difficulty_id, update_time=None):
-    if update_time is None:
-        update_time = int(time.time())
+def get_setting_id(live_difficulty_id):
     try:
         return live_setting_id[live_difficulty_id]
     except KeyError:
@@ -684,7 +685,7 @@ def request_cache(source, stat=1, update_time=None):
         update_time = int(time.time())
     s = source
     m = source['modules']
-    sql = """INSERT INTO request_cache (status, uid, m0, m1, path, headers, request, response, req_time) 
+    sql = """INSERT INTO request_cache (`status`, uid, m0, m1, path, headers, request, response, req_time) 
           VALUES ({},{},'{}','{}','{}','{}','{}','{}',{})""".format(stat, s['user_id'], m[0], m[1],
                                                                     escape_string(s['path']),
                                                                     json_dump(s['headers'].items()),
@@ -821,6 +822,32 @@ def recovery(source, update_time=None):
     sql = """insert into recovery (uid, energy_max,over_max_energy, before_sns_coin, after_sns_coin, update_time) VALUES 
     ('{}','{}','{}','{}','{}','{}')""".format(source['user_id'], res['energy_max'], res['over_max_energy'],
                                               res['before_sns_coin'], res['after_sns_coin'], update_time)
+    return sql,
+
+
+def quest(source_start, source_reward, judge_card=-1, update_time=None):
+    a_req, a_res = source_start['req_data'], source_start['res_data']
+    b_req, b_res = source_reward['req_data'], source_reward['res_data']
+    point_info = b_res['event_info']['live_event_point_info']
+    if update_time is None:
+        update_time = int(time.time())
+    diff_id = a_res['live_list'][0]['live_info']['live_difficulty_id']
+    score = b_req['score_smile'] + b_req['score_cool'] + b_req['score_cute']
+    sql = """INSERT INTO event_quest (uid, event_id, lp_factor, difficulty, live_difficulty_id, live_setting_id, bonus, 
+    score, max_combo, perfect_cnt, great_cnt, good_cnt, bad_cnt, miss_cnt, love_cnt, skill_count, last_hp, 
+    before_event_point, added_event_point, base_event_point, after_event_point, live_event_reward_info, update_time,
+    judge_card) 
+    VALUES ('{}','{}','{}','{}','{}','{}',{},
+    '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}',
+    '{}','{}','{}','{}','{}','{}','{}')""".format(
+        source_reward['user_id'], a_req['event_id'], a_req['lp_factor'], a_req['difficulty'], diff_id,
+        get_setting_id(diff_id), "'"+json_dump(a_res['live_list'][0]['bonus'])+"'" if 'bonus' in a_res['live_list'][0] else 'NULL',
+        score, b_req['max_combo'], b_req['perfect_cnt'], b_req['great_cnt'], b_req['good_cnt'], b_req['bad_cnt'],
+        b_req['miss_cnt'], b_req['love_cnt'], b_req['skill_count'], b_req['last_hp'],
+        point_info['before_event_point'], point_info['added_event_point'], point_info['base_event_point'],
+        point_info['after_event_point'], json_dump(b_res['event_info']['live_event_reward_info']), update_time,
+        judge_card
+    )
     return sql,
 
 
