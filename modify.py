@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from collections import OrderedDict
 from datetime import datetime
 from proxy2.proxy2 import *
@@ -14,6 +15,7 @@ from gen_xmessagecode import gen_xmessagecode
 import config as cfg
 from mysql import Mysql
 import requests as rq
+
 
 REQ_PATTERN = re.compile(r"\[?{.*}\]?")
 host_white_list = ['prod.game1.ll.sdo.com', 'mgame.sdo.com', 'mygm.sdo.com', 'woa.sdo.com']

@@ -317,7 +317,7 @@ class DataHandler:
         elif m[0] == 'unit':
             if m[1] == 'unitAll':
                 result = self.res_data["result"]
-                print("卡牌数 %s" % len(result))
+                print("unitCount %s" % len(result))
                 put_sqls(sq.replace_unit(self.id, result))
                 print("unitAll inserted")
 
