@@ -311,8 +311,8 @@ def live_play(source, judge_card=-1, update_time=None):
     uid = source['user_id']
     live_info = (res['live_info'][0]['live_difficulty_id'],
                  res['live_info'][0]['is_random'],
-                 res['live_info'][0]['dangerous'],
-                 res['live_info'][0]['use_quad_point']
+                 '0', #res['live_info'][0]['dangerous'],
+                 '0',#res['live_info'][0]['use_quad_point']
                  )
     setting_id = get_setting_id(live_info[0])
     notes_info = (req['perfect_cnt'],

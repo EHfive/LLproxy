@@ -420,14 +420,14 @@ def score_match_thread(u_id):
             jugde_card = get_deck_judge(u_id, req['unit_deck_id'])
             put_sqls(sq.score_match_status_0(u_id, event_id, room_id, final_room_info['res_data']))
             put_sqls(sq.score_match_status_1(u_id, event_id, room_id, req, jugde_card))
-            live_info = res['live_info'][0]
-            liveinfo = {
-                'live_difficulty_id': live_info['live_difficulty_id'],
-                'is_random': live_info['is_random'],
-                'dangerous': live_info['dangerous'],
-                'notes_speed': live_info['notes_speed'],
-                'notes_list_len': len(live_info['notes_list']),
-            }
+            # live_info = res['live_info'][0]
+            # liveinfo = {
+            #     'live_difficulty_id': live_info['live_difficulty_id'],
+            #     'is_random': live_info['is_random'],
+            #     'dangerous': live_info['dangerous'],
+            #     'notes_speed': live_info['notes_speed'],
+            #     'notes_list_len': len(live_info['notes_list']),
+            # }
             # print('liveStart')
             # print(json.dumps(liveinfo, indent=4), end='\n\n')
         elif act == 'liveEnd':

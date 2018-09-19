@@ -3,5 +3,4 @@ gen_xmessagecode.py
 .idea/
 __pycache__/
 data/
-db/
 modify2.py
